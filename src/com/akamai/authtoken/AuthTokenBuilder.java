@@ -19,7 +19,7 @@
 package com.akamai.authtoken;
 
 
-public class AuthToken {
+public class AuthTokenBuilder {
     private String tokenType = null;
     private String tokenName = "__token__";
     private String key = null;
@@ -32,40 +32,57 @@ public class AuthToken {
     private boolean escapeEarly = false;
     private boolean verbose = false;
 
-    public AuthToken(
-        String tokenType,
-        String tokenName,
-        String key,
-        String algorithm,
-        String startTime,
-        String endTime,
-        String windowSeconds,
-        char fieldDelimiter,
-        char aclDelimiter,
-        boolean escapeEarly,
-        boolean verbose) 
-    {
+    public AuthTokenBuilder tokenType(String tokenType) {
         this.tokenType = tokenType;
+        return this;
+    }
+    public AuthTokenBuilder tokenName(String tokenName) {
         this.tokenName = tokenName;
+        return this;
+    }
+    public AuthTokenBuilder key(String key) {
         this.key = key;
+        return this;
+    }
+    public AuthTokenBuilder algorithm(String algorithm) {
         this.algorithm = algorithm;
+        return this;
+    }
+    public AuthTokenBuilder startTime(String startTime) {
         this.startTime = startTime;
+        return this;
+    }
+    public AuthTokenBuilder endTime(String endTime) {
         this.endTime = endTime;
+        return this;
+    }
+    public AuthTokenBuilder windowSeconds(String windowSeconds) {
         this.windowSeconds = windowSeconds;
+        return this;
+    }
+    public AuthTokenBuilder fieldDelimiter(char fieldDelimiter) {
         this.fieldDelimiter = fieldDelimiter;
+        return this;
+    }
+    public AuthTokenBuilder aclDelimiter(char aclDelimiter) {
         this.aclDelimiter = aclDelimiter;
+        return this;
+    }
+    public AuthTokenBuilder escapeEarly(boolean escapeEarly) {
         this.escapeEarly = escapeEarly;
+        return this;
+    }
+    public AuthTokenBuilder verbose(boolean verbose) {
         this.verbose = verbose;
+        return this;
     }
 
-    // Temp to test
-    public static void main(String[] args) {
-        AuthToken at = new AuthTokenBuilder()
-                .key("something")
-                .windowSeconds(500)
-                .escapeEarly(true)
-                .build();
-        
-        System.out.println(at.key);
+    public AuthToken build() {
+        return new AuthToken(
+            tokenType, tokenName, key, algorithm, 
+            startTime, endTime, windowSeconds, 
+            fieldDelimiter, aclDelimiter, 
+            escapeEarly, verbose 
+        );
     }
 }
