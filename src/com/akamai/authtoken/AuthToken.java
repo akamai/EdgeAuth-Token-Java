@@ -18,23 +18,35 @@
 
 package com.akamai.authtoken;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+
+class AuthTokenException extends Exception {
+    public AuthTokenException(String msg) {
+        super(msg);
+    }
+}
+
 
 public class AuthToken {
-    private String tokenType = null;
-    private String tokenName = "__token__";
-    private String key = null;
-    private String algorithm = "sha256";
-    private String salt = null;
-    private String ip = null;
-    private String payload = null;
-    private String sessionId = null;
-    private long startTime = -1;
-    private long endTime = -1;
-    private long windowSeconds = -1;
-    private char fieldDelimiter = '~';
-    private char aclDelimiter = '!';
-    private boolean escapeEarly = false;
-    private boolean verbose = false;
+    private String tokenType;
+    private String tokenName;
+    private String key;
+    private String algorithm;
+    private String salt;
+    private String ip;
+    private String payload;
+    private String sessionId;
+    private long startTime;
+    private long endTime;
+    private long windowSeconds;
+    private char fieldDelimiter;
+    private char aclDelimiter;
+    private boolean escapeEarly;
+    private boolean verbose;
 
     public AuthToken(
         String tokenType,
@@ -51,49 +63,175 @@ public class AuthToken {
         char fieldDelimiter,
         char aclDelimiter,
         boolean escapeEarly,
-        boolean verbose) 
+        boolean verbose) throws AuthTokenException
     {
-        this.tokenType = tokenType;
-        this.tokenName = tokenName;
-        this.key = key;
-        this.algorithm = algorithm;
-        this.salt = salt;
-        this.ip = ip;
-        this.payload = payload;
-        this.sessionId = sessionId;
-        this.startTime = startTime;
-        this.endTime = endTime;
-        this.windowSeconds = windowSeconds;
-        this.fieldDelimiter = fieldDelimiter;
-        this.aclDelimiter = aclDelimiter;
-        this.escapeEarly = escapeEarly;
-        this.verbose = verbose;
+        this.setTokenType(tokenType);
+        this.setTokenName(tokenName);
+        this.setKey(key);
+        this.setAlgorithm(algorithm);
+        this.setSalt(salt);
+        this.setIp(ip);
+        this.setPayload(payload);
+        this.setSessionId(sessionId);
+        this.setStartTime(startTime);
+        this.setEndTime(endTime);
+        this.setWindowSeconds(windowSeconds);
+        this.setFieldDelimiter(fieldDelimiter);
+        this.setAclDelimiter(aclDelimiter);
+        this.setEscapeEarly(escapeEarly);
+        this.setVerbose(verbose);
     }
 
-    private String generateToken(boolean isUrl) {
+    private String escapeEarly(final String text) {
+        if (this.escapeEarly == true) {
+            try {
+                StringBuilder newText = new StringBuilder(URLEncoder.encode(text, "UTF-8"));
+                Pattern pattern = Pattern.compile("%..");
+                Matcher matcher = pattern.matcher(newText);
+                String tmpText;
+                while (matcher.find()) {
+                    tmpText = newText.substring(matcher.start(), matcher.end()).toLowerCase();
+                    newText.replace(matcher.start(), matcher.end(), tmpText);
+                }
+                return newText.toString();
+            } catch (UnsupportedEncodingException e) {
+                return text;
+            }
+        } else {
+            return text;
+        }
+    }
+
+    private String generateToken(String path, boolean isUrl) {
 
         return "";
     }
 
     public String generateURLToken(String url) {
-
-        return generateToken(true);
+        return generateToken(url, true);
     }
 
     public String generateACLToken(String acl) {
-
-        return generateToken(false);
+        return generateToken(acl, false);
     }
 
     // Temp to test
-    public static void main(String[] args) {
+    public static void main(String[] args) throws AuthTokenException {
+        
         AuthToken at = new AuthTokenBuilder()
                 .key("something")
                 .windowSeconds(500)
                 .escapeEarly(true)
                 .build();
-        
+
         System.out.println(at.key);
+    }
+
+    public void setTokenType(String tokenType) {
+        this.tokenType = tokenType;
+    }
+    public void setTokenName(String tokenName) throws AuthTokenException {
+        if (tokenName.isEmpty()) {
+            throw new AuthTokenException("You must provide a token name.");
+        }
+        this.tokenName = tokenName;
+    }
+    public void setKey(String key) throws AuthTokenException {
+        if (key.isEmpty()) {
+            throw new AuthTokenException("You must provide a secret in order to generate a new token.");
+        }
+        this.key = key;
+    }
+    public void setAlgorithm(String algorithm) throws AuthTokenException {
+        if (!algorithm.equalsIgnoreCase("md5") &&
+        !algorithm.equalsIgnoreCase("sha1") &&
+        !algorithm.equalsIgnoreCase("sha256")) {
+            throw new AuthTokenException("Unknown Algorithm");
+        }
+        if (algorithm.equalsIgnoreCase("sha256"))
+            this.algorithm = "HmacSHA256";
+        else if (algorithm.equalsIgnoreCase("sha1"))
+            this.algorithm = "HmacSHA1";
+        else if (algorithm.equalsIgnoreCase("md5"))
+            this.algorithm = "HmacMD5";
+    }
+    public void setSalt(String salt) {
+        this.salt = salt;
+    }
+    public void setIp(String ip) {
+        this.ip = ip;
+    }
+    public void setPayload(String payload) {
+        this.payload = payload;
+    }
+    public void setSessionId(String sessionId) {
+        this.sessionId = sessionId;
+    }
+    public void setStartTime(long startTime) {
+        this.startTime = startTime;
+    }
+    public void setEndTime(long endTime) {
+        this.endTime = endTime;
+    }
+    public void setWindowSeconds(long windowSeconds) {
+        this.windowSeconds = windowSeconds;
+    }
+    public void setFieldDelimiter(char fieldDelimiter) {
+        this.fieldDelimiter = fieldDelimiter;
+    }
+    public void setAclDelimiter(char aclDelimiter) {
+        this.aclDelimiter = aclDelimiter;
+    }
+    public void setEscapeEarly(boolean escapeEarly) {
+        this.escapeEarly = escapeEarly;
+    }
+    public void setVerbose(boolean verbose) {
+        this.verbose = verbose;
+    }
+    public String getTokenType() {
+        return this.tokenType;
+    }
+    public String getTokenName() {
+        return this.tokenName;
+    }
+    public String getKey() {
+        return this.key;
+    }
+    public String getAlgorithm() {
+        return this.algorithm;
+    }
+    public String getSalt() {
+        return this.salt;
+    }
+    public String getIp() {
+        return this.ip;
+    }
+    public String getPayload() {
+        return this.payload;
+    }
+    public String getSessionId() {
+        return this.sessionId;
+    }
+    public long getStartTime() {
+        return this.startTime;
+    }
+    public long getEndTime() {
+        return this.endTime;
+    }
+    public long getwindowSeconds() {
+        return this.windowSeconds;
+    }
+    public char getFieldDelimiter() {
+        return this.fieldDelimiter;
+    }
+    public char getAclDelimiter() {
+        return this.aclDelimiter;
+    }
+    public boolean isEscapeEarly() {
+        return this.escapeEarly;
+    }
+    public boolean isVerbose() {
+        return this.verbose;
     }
 }
 
@@ -113,7 +251,6 @@ class AuthTokenBuilder {
     private char fieldDelimiter = '~';
     private char aclDelimiter = '!';
     private boolean escapeEarly = false;
-    
     private boolean verbose = false;
 
 
@@ -178,14 +315,15 @@ class AuthTokenBuilder {
         return this;
     }
 
-    public AuthToken build() {
+    public AuthToken build() throws AuthTokenException {
         return new AuthToken(
-            tokenType, tokenName, 
+            tokenType, tokenName,
             key, algorithm, salt,
             ip, payload, sessionId,
-            startTime, endTime, windowSeconds, 
-            fieldDelimiter, aclDelimiter, 
+            startTime, endTime, windowSeconds,
+            fieldDelimiter, aclDelimiter,
             escapeEarly, verbose
         );
     }
 }
+
