@@ -20,8 +20,11 @@ package com.akamai.authtoken;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.Calendar;
+import java.util.TimeZone;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 
 
 class AuthTokenException extends Exception {
@@ -32,6 +35,8 @@ class AuthTokenException extends Exception {
 
 
 public class AuthToken {
+    public static Long NOW = 0L;
+
     private String tokenType;
     private String tokenName;
     private String key;
@@ -40,9 +45,9 @@ public class AuthToken {
     private String ip;
     private String payload;
     private String sessionId;
-    private long startTime;
-    private long endTime;
-    private long windowSeconds;
+    private Long startTime;
+    private Long endTime;
+    private Long windowSeconds;
     private char fieldDelimiter;
     private char aclDelimiter;
     private boolean escapeEarly;
@@ -57,9 +62,9 @@ public class AuthToken {
         String ip, 
         String payload,
         String sessionId,
-        long startTime,
-        long endTime,
-        long windowSeconds,
+        Long startTime,
+        Long endTime,
+        Long windowSeconds,
         char fieldDelimiter,
         char aclDelimiter,
         boolean escapeEarly,
@@ -101,17 +106,37 @@ public class AuthToken {
             return text;
         }
     }
+    private String generateToken(String path, boolean isUrl) throws AuthTokenException {
+        if (this.startTime == this.NOW) {
+            this.startTime = Calendar.getInstance(TimeZone.getTimeZone("UTC")).getTimeInMillis() / 1000L;
+        }
 
-    private String generateToken(String path, boolean isUrl) {
+        if (this.endTime == null) {
+            if (this.windowSeconds > 0) {
+                if (this.startTime == null) {
+                    this.endTime = (Calendar.getInstance(TimeZone.getTimeZone("UTC")).getTimeInMillis() / 1000L) +
+                        this.windowSeconds;
+                } else {
+                    this.endTime = this.startTime + this.windowSeconds;
+                }
+            } else {
+                throw new AuthTokenException("You must provide an expiration time or a duration window..");
+            }
+        }
+
+        if (this.startTime != null && (this.endTime <= this.startTime)) {
+            throw new AuthTokenException("Token will have already expired.");
+        }
+
 
         return "";
     }
 
-    public String generateURLToken(String url) {
+    public String generateURLToken(String url) throws AuthTokenException {
         return generateToken(url, true);
     }
 
-    public String generateACLToken(String acl) {
+    public String generateACLToken(String acl) throws AuthTokenException {
         return generateToken(acl, false);
     }
 
@@ -123,7 +148,7 @@ public class AuthToken {
                 .windowSeconds(500)
                 .escapeEarly(true)
                 .build();
-
+        
         System.out.println(at.key);
     }
 
@@ -245,9 +270,9 @@ class AuthTokenBuilder {
     private String ip = null;
     private String payload = null;
     private String sessionId = null;
-    private long startTime = -1;
-    private long endTime = -1;
-    private long windowSeconds = -1;
+    private Long startTime = null;
+    private Long endTime = null;
+    private Long windowSeconds = null;
     private char fieldDelimiter = '~';
     private char aclDelimiter = '!';
     private boolean escapeEarly = false;
