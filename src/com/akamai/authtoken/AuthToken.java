@@ -19,13 +19,17 @@
 package com.akamai.authtoken;
 
 import java.io.UnsupportedEncodingException;
+import java.math.BigInteger;
 import java.net.URLEncoder;
+import java.security.NoSuchAlgorithmException;
+import java.security.InvalidKeyException;
 import java.util.Calendar;
 import java.util.TimeZone;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
+import javax.xml.bind.DatatypeConverter;
 
 class AuthTokenException extends Exception {
     public AuthTokenException(String msg) {
@@ -36,7 +40,8 @@ class AuthTokenException extends Exception {
 
 public class AuthToken {
     public static Long NOW = 0L;
-
+    public static char ACL_DELIMITER = '!';
+    
     private String tokenType;
     private String tokenName;
     private String key;
@@ -49,7 +54,6 @@ public class AuthToken {
     private Long endTime;
     private Long windowSeconds;
     private char fieldDelimiter;
-    private char aclDelimiter;
     private boolean escapeEarly;
     private boolean verbose;
 
@@ -66,7 +70,6 @@ public class AuthToken {
         Long endTime,
         Long windowSeconds,
         char fieldDelimiter,
-        char aclDelimiter,
         boolean escapeEarly,
         boolean verbose) throws AuthTokenException
     {
@@ -82,7 +85,6 @@ public class AuthToken {
         this.setEndTime(endTime);
         this.setWindowSeconds(windowSeconds);
         this.setFieldDelimiter(fieldDelimiter);
-        this.setAclDelimiter(aclDelimiter);
         this.setEscapeEarly(escapeEarly);
         this.setVerbose(verbose);
     }
@@ -109,10 +111,12 @@ public class AuthToken {
     private String generateToken(String path, boolean isUrl) throws AuthTokenException {
         if (this.startTime == this.NOW) {
             this.startTime = Calendar.getInstance(TimeZone.getTimeZone("UTC")).getTimeInMillis() / 1000L;
+        } else if(this.startTime != null && this.startTime > 0) {
+            throw new AuthTokenException("startTime must be ( > 0 )");
         }
 
         if (this.endTime == null) {
-            if (this.windowSeconds > 0) {
+            if (this.windowSeconds != null && this.windowSeconds > 0) {
                 if (this.startTime == null) {
                     this.endTime = (Calendar.getInstance(TimeZone.getTimeZone("UTC")).getTimeInMillis() / 1000L) +
                         this.windowSeconds;
@@ -120,16 +124,103 @@ public class AuthToken {
                     this.endTime = this.startTime + this.windowSeconds;
                 }
             } else {
-                throw new AuthTokenException("You must provide an expiration time or a duration window..");
+                throw new AuthTokenException("You must provide an expiration time or a duration window ( > 0 )");
             }
+        } else if(this.endTime <= 0) {
+            throw new AuthTokenException("endTime must be ( > 0 )");
         }
 
         if (this.startTime != null && (this.endTime <= this.startTime)) {
             throw new AuthTokenException("Token will have already expired.");
         }
 
+        if (path.isEmpty()) {
+            if (isUrl) {
+                throw new AuthTokenException("You must provide a URL.");
+            } else {
+                throw new AuthTokenException("You must provide a ARL.");
+            }
+        }
 
-        return "";
+        if (this.verbose) {
+            System.out.println("Akamai Token Generation Parameters");
+            if (isUrl) {
+                System.out.println("    URL             : " + path);
+            } else {
+                System.out.println("    ACL             : " + path);
+            }
+            System.out.println("    Token Type      : " + this.tokenType);
+            System.out.println("    Token Name      : " + this.tokenName);
+            System.out.println("    Key/Secret      : " + this.key);
+            System.out.println("    Algo            : " + this.algorithm);
+            System.out.println("    Salt            : " + this.salt);
+            System.out.println("    IP              : " + this.ip);
+            System.out.println("    Payload         : " + this.payload);
+            System.out.println("    Session ID      : " + this.sessionId);
+            System.out.println("    Start Time      : " + this.startTime);
+            System.out.println("    Window(seconds) : " + this.windowSeconds);
+            System.out.println("    End Time        : " + this.endTime);
+            System.out.println("    Field Delimiter : " + this.fieldDelimiter);
+            System.out.println("    ACL Delimiter   : " + this.ACL_DELIMITER);
+            System.out.println("    Escape Early    : " + this.escapeEarly);
+        }
+
+        StringBuilder newToken = new StringBuilder();
+        if (this.ip != null) {
+            newToken.append("ip=");
+            newToken.append(escapeEarly(this.ip));
+            newToken.append(this.fieldDelimiter);
+        }
+        if (this.startTime != null) {
+            newToken.append("st=");
+            newToken.append(Long.toString(this.startTime));
+            newToken.append(this.fieldDelimiter);
+        }
+        newToken.append("exp=");
+        newToken.append(Long.toString(this.endTime));
+        newToken.append(this.fieldDelimiter);
+        
+        if (!isUrl) {
+            newToken.append("acl=");
+            newToken.append(escapeEarly(path));
+            newToken.append(this.fieldDelimiter);
+        }
+
+        if (this.sessionId != null) {
+            newToken.append("id=");
+            newToken.append(escapeEarly(this.sessionId));
+            newToken.append(this.fieldDelimiter);
+        }
+
+        if (this.payload != null) {
+            newToken.append("data=");
+            newToken.append(escapeEarly(this.payload));
+        }
+
+        StringBuilder hashSource = new StringBuilder(newToken);
+        if (isUrl) {
+            hashSource.append("url=");
+            hashSource.append(escapeEarly(path));
+        }
+
+        if (this.salt != null) {
+            hashSource.append(this.salt);
+        }
+        
+        try {
+            Mac hmac = Mac.getInstance(this.algorithm);
+            byte[] keyBytes = DatatypeConverter.parseHexBinary(this.key);
+            SecretKeySpec secretKey = new SecretKeySpec(keyBytes, this.algorithm);
+            hmac.init(secretKey);
+
+            byte[] hmacBytes = hmac.doFinal(hashSource.toString().getBytes());
+            return newToken.toString() + "hmac=" + 
+                String.format("%0" + (2*hmac.getMacLength()) +  "x", new BigInteger(1, hmacBytes));
+        } catch (NoSuchAlgorithmException e) {
+            throw new AuthTokenException(e.toString());
+        } catch (InvalidKeyException e) {
+            throw new AuthTokenException(e.toString());
+        }
     }
 
     public String generateURLToken(String url) throws AuthTokenException {
@@ -140,16 +231,15 @@ public class AuthToken {
         return generateToken(acl, false);
     }
 
-    // Temp to test
     public static void main(String[] args) throws AuthTokenException {
         
         AuthToken at = new AuthTokenBuilder()
-                .key("something")
-                .windowSeconds(500)
-                .escapeEarly(true)
+                .key("abcd1234")
+                .windowSeconds(50000)
+                .escapeEarly(false)
                 .build();
-        
         System.out.println(at.key);
+        System.out.println(at.generateURLToken("/q_ignore"));
     }
 
     public void setTokenType(String tokenType) {
@@ -192,21 +282,19 @@ public class AuthToken {
     public void setSessionId(String sessionId) {
         this.sessionId = sessionId;
     }
-    public void setStartTime(long startTime) {
+    public void setStartTime(Long startTime) {
         this.startTime = startTime;
     }
-    public void setEndTime(long endTime) {
+    public void setEndTime(Long endTime) {
         this.endTime = endTime;
     }
-    public void setWindowSeconds(long windowSeconds) {
+    public void setWindowSeconds(Long windowSeconds) {
         this.windowSeconds = windowSeconds;
     }
     public void setFieldDelimiter(char fieldDelimiter) {
         this.fieldDelimiter = fieldDelimiter;
     }
-    public void setAclDelimiter(char aclDelimiter) {
-        this.aclDelimiter = aclDelimiter;
-    }
+    
     public void setEscapeEarly(boolean escapeEarly) {
         this.escapeEarly = escapeEarly;
     }
@@ -249,9 +337,7 @@ public class AuthToken {
     public char getFieldDelimiter() {
         return this.fieldDelimiter;
     }
-    public char getAclDelimiter() {
-        return this.aclDelimiter;
-    }
+    
     public boolean isEscapeEarly() {
         return this.escapeEarly;
     }
@@ -274,7 +360,6 @@ class AuthTokenBuilder {
     private Long endTime = null;
     private Long windowSeconds = null;
     private char fieldDelimiter = '~';
-    private char aclDelimiter = '!';
     private boolean escapeEarly = false;
     private boolean verbose = false;
 
@@ -327,10 +412,7 @@ class AuthTokenBuilder {
         this.fieldDelimiter = fieldDelimiter;
         return this;
     }
-    public AuthTokenBuilder aclDelimiter(char aclDelimiter) {
-        this.aclDelimiter = aclDelimiter;
-        return this;
-    }
+    
     public AuthTokenBuilder escapeEarly(boolean escapeEarly) {
         this.escapeEarly = escapeEarly;
         return this;
@@ -346,9 +428,7 @@ class AuthTokenBuilder {
             key, algorithm, salt,
             ip, payload, sessionId,
             startTime, endTime, windowSeconds,
-            fieldDelimiter, aclDelimiter,
-            escapeEarly, verbose
+            fieldDelimiter, escapeEarly, verbose
         );
     }
 }
-
