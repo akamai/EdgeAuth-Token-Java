@@ -31,6 +31,7 @@ import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 import javax.xml.bind.DatatypeConverter;
 
+
 class AuthTokenException extends Exception {
     public AuthTokenException(String msg) {
         super(msg);
