@@ -16,6 +16,7 @@
 * limitations under the License.
 */
 
+
 package com.akamai.authtoken;
 
 import java.io.UnsupportedEncodingException;
@@ -110,7 +111,7 @@ public class AuthToken {
         }
     }
     private String generateToken(String path, boolean isUrl) throws AuthTokenException {
-        if (this.startTime == this.NOW) {
+        if (this.startTime == AuthToken.NOW) {
             this.startTime = Calendar.getInstance(TimeZone.getTimeZone("UTC")).getTimeInMillis() / 1000L;
         } else if(this.startTime != null && this.startTime > 0) {
             throw new AuthTokenException("startTime must be ( > 0 )");
@@ -162,7 +163,7 @@ public class AuthToken {
             System.out.println("    Window(seconds) : " + this.windowSeconds);
             System.out.println("    End Time        : " + this.endTime);
             System.out.println("    Field Delimiter : " + this.fieldDelimiter);
-            System.out.println("    ACL Delimiter   : " + this.ACL_DELIMITER);
+            System.out.println("    ACL Delimiter   : " + AuthToken.ACL_DELIMITER);
             System.out.println("    Escape Early    : " + this.escapeEarly);
         }
 
@@ -196,17 +197,22 @@ public class AuthToken {
         if (this.payload != null) {
             newToken.append("data=");
             newToken.append(escapeEarly(this.payload));
+            newToken.append(this.fieldDelimiter);
         }
 
         StringBuilder hashSource = new StringBuilder(newToken);
         if (isUrl) {
             hashSource.append("url=");
             hashSource.append(escapeEarly(path));
+            hashSource.append(this.fieldDelimiter);
         }
 
         if (this.salt != null) {
+        	hashSource.append("salt=");
             hashSource.append(this.salt);
+            hashSource.append(this.fieldDelimiter);
         }
+        hashSource.deleteCharAt(hashSource.length() - 1);
         
         try {
             Mac hmac = Mac.getInstance(this.algorithm);

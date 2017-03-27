@@ -93,9 +93,14 @@ public class AuthTokenTest {
 		sb.append("GET ");
 		sb.append(path);
 		if (qs != null && !qs.isEmpty()) {
-			sb.append("?");
+			if (path.contains("?")) {
+				sb.append("&");
+			} else {
+				sb.append("?");
+			}
 			sb.append(qs);
 		}
+		//System.out.println(sb.toString());
 		sb.append(" HTTP/1.1\r\n");
 		sb.append("Host: ");
 		sb.append(hostname);
@@ -141,7 +146,7 @@ public class AuthTokenTest {
 
 		String qs = this.at.getTokenName() + "=" + token;
 		String statusCode = AuthTokenTest.requests(this.atHostname, path, qs, null);
-		assertEquals("404", statusCode);
+		assertEquals(expacted, statusCode);
 	}
 	
 	private void cookieAssertEqual(String path, String expacted, boolean escapeEarly, boolean transition, String payload, String sessionId, boolean isUrl) throws AuthTokenException, UnknownHostException, IOException { 
@@ -159,7 +164,7 @@ public class AuthTokenTest {
 
 		String cookie = "Cookie: " + this.cat.getTokenName() + "=" + token;
 		String statusCode = AuthTokenTest.requests(this.atHostname, path, null, cookie);
-		assertEquals("404", statusCode);
+		assertEquals(expacted, statusCode);
 	}
 	
 	private void headerAssertEqual(String path, String expacted, boolean escapeEarly, boolean transition, String payload, String sessionId, boolean isUrl) throws AuthTokenException, UnknownHostException, IOException { 
@@ -177,18 +182,90 @@ public class AuthTokenTest {
 
 		String header = this.hat.getTokenName() + ":" + token;
 		String statusCode = AuthTokenTest.requests(this.atHostname, path, null, header);
-		assertEquals("404", statusCode);
+		assertEquals(expacted, statusCode);
 	}
 	
 	private void testCaseSet(String queryPath, String cookiePath, String headerPath, boolean escapeEarly, boolean isUrl) throws UnknownHostException, AuthTokenException, IOException {
+		// General Test
 		this.queryAssertEqual(queryPath, "404", escapeEarly, false, null, null, isUrl);
 		this.cookieAssertEqual(cookiePath, "404", escapeEarly, false, null, null, isUrl);
 		this.headerAssertEqual(headerPath, "404", escapeEarly, false, null, null, isUrl);
+		
+		// Query String Test
+		if (isUrl) {
+			String queryString = "?foo=bar&hello=world";
+			this.queryAssertEqual(queryPath + queryString, "403", escapeEarly==false, false, null, null, isUrl);
+			this.cookieAssertEqual(cookiePath + queryString, "403", escapeEarly==false, false, null, null, isUrl);
+			this.headerAssertEqual(headerPath + queryString, "403", escapeEarly==false, false, null, null, isUrl);
+		}
+		
+		// Transition Key Test
+		this.queryAssertEqual(queryPath, "404", escapeEarly, true, null, null, isUrl);
+		this.cookieAssertEqual(cookiePath, "404", escapeEarly, true, null, null, isUrl);
+		this.headerAssertEqual(headerPath, "404", escapeEarly, true, null, null, isUrl);
+		
+		// Payload Test
+		this.queryAssertEqual(queryPath, "404", escapeEarly, false, "SOME_PAYLOAD_DATA", null, isUrl);
+		this.cookieAssertEqual(cookiePath, "404", escapeEarly, false, "SOME_PAYLOAD_DATA", null, isUrl);
+		this.headerAssertEqual(headerPath, "404", escapeEarly, false, "SOME_PAYLOAD_DATA", null, isUrl);
+		
+		// SessionId Test
+		this.queryAssertEqual(queryPath, "404", escapeEarly, false, null, "SOME_SESSIONID_DATA", isUrl);
+		this.cookieAssertEqual(cookiePath, "404", escapeEarly, false, null, "SOME_SESSIONID_DATA", isUrl);
+		this.headerAssertEqual(headerPath, "404", escapeEarly, false, null, "SOME_SESSIONID_DATA", isUrl);   
 	}
 	
-	
+	/**********
+	 * URL TEST
+	 **********/
 	@Test
 	public void test_url_escape_on__ignoreQuery_yes() throws UnknownHostException, AuthTokenException, IOException {
 		this.testCaseSet("/q_escape_ignore", "/c_escape_ignore", "/h_escape_ignore", true, true);
+	}
+	
+	@Test
+	public void test_url_escape_off__ignoreQuery_yes() throws UnknownHostException, AuthTokenException, IOException {
+		this.testCaseSet("/q_ignore", "/c_ignore", "/h_ignore", false, true);
+	}
+	
+	@Test
+	public void test_url_escape_on__ignoreQuery_no() throws UnknownHostException, AuthTokenException, IOException {
+		String queryPath = "/q_escape";
+		String cookiePath = "/c_escape";
+		String headerPath = "/h_escape";
+		this.testCaseSet(queryPath, cookiePath, headerPath, true, true);
+
+		String queryString = "?foo=bar&hello=world";
+		this.queryAssertEqual(queryPath + queryString, "404", true, false, null, null, true);
+		this.cookieAssertEqual(cookiePath + queryString, "404", true, false, null, null, true);
+		this.headerAssertEqual(headerPath + queryString, "404", true, false, null, null, true);
+	}
+	
+	@Test
+	public void test_url_escape_off__ignoreQuery_no() throws UnknownHostException, AuthTokenException, IOException {
+		String queryPath = "/q";
+		String cookiePath = "/c";
+		String headerPath = "/h";
+		this.testCaseSet(queryPath, cookiePath, headerPath, false, true);
+
+		String queryString = "?foo=bar&hello=world";
+		this.queryAssertEqual(queryPath + queryString, "404", false, false, null, null, true);
+		this.cookieAssertEqual(cookiePath + queryString, "404", false, false, null, null, true);
+		this.headerAssertEqual(headerPath + queryString, "404", false, false, null, null, true);
+	}
+	
+	@Test
+	public void test_url_query_escape_on__ignore_yes_with_salt() throws UnknownHostException, AuthTokenException, IOException {
+		String querySaltPath = "/salt";
+		AuthToken ats = new AuthTokenBuilder()
+				.key(this.atEncryptionKey)
+				.salt(this.atSalt)
+				.windowSeconds(AuthTokenTest.DEFAULT_WINDOW_SECONDS)
+				.escapeEarly(true)
+				.build();
+		String token = ats.generateURLToken(querySaltPath);
+		String qs = ats.getTokenName() + "=" + token;
+		String statusCode = AuthTokenTest.requests(this.atHostname, querySaltPath, qs, null);
+		assertEquals("404", statusCode);
 	}
 }
