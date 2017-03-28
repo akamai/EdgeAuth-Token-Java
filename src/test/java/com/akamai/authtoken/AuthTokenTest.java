@@ -268,4 +268,55 @@ public class AuthTokenTest {
 		String statusCode = AuthTokenTest.requests(this.atHostname, querySaltPath, qs, null);
 		assertEquals("404", statusCode);
 	}
+	
+	/**********
+	 * ACL TEST
+	 **********/
+	@Test
+	public void test_acl_escape_on__ignoreQuery_yes() throws UnknownHostException, AuthTokenException, IOException {
+		this.testCaseSet("/q_escape_ignore", "/c_escape_ignore", "/h_escape_ignore", false, false);
+	}
+	
+	@Test
+	public void test_acl_escape_off__ignoreQuery_yes() throws UnknownHostException, AuthTokenException, IOException {
+		this.testCaseSet("/q_ignore", "/c_ignore", "/h_ignore", false, false);
+	}
+	
+	@Test
+	public void test_acl_escape_on__ignoreQuery_no() throws UnknownHostException, AuthTokenException, IOException {
+		this.testCaseSet("/q_escape", "/c_escape", "/h_escape", false, false);
+	}
+	
+	@Test
+	public void test_acl_escape_off__ignoreQuery_no() throws UnknownHostException, AuthTokenException, IOException {
+		this.testCaseSet("/q", "/c", "/h", false, false);
+	}
+	
+	@Test
+	public void test_acl_asta_escape_on__ignoreQuery_yes() throws UnknownHostException, AuthTokenException, IOException {
+		AuthToken ata = new AuthTokenBuilder()
+				.key(this.atEncryptionKey)
+				.windowSeconds(AuthTokenTest.DEFAULT_WINDOW_SECONDS)
+				.build();
+		String token = ata.generateACLToken("/q_escape_ignore/*");
+		String qs = ata.getTokenName() + "=" + token;
+		String statusCode = AuthTokenTest.requests(this.atHostname, "/q_escape_ignore/hello", qs, null);
+		assertEquals("404", statusCode);
+	}
+	
+	@Test
+	public void test_acl_deli_escape_on__ignoreQuery_yes() throws UnknownHostException, AuthTokenException, IOException {
+		AuthToken atd = new AuthTokenBuilder()
+				.key(this.atEncryptionKey)
+				.windowSeconds(AuthTokenTest.DEFAULT_WINDOW_SECONDS)
+				.build();
+		String acl[] = new String[] { "/q_escape_ignore", "/q_escape_ignore/*" };
+		String token = atd.generateACLToken(String.join(AuthToken.ACL_DELIMITER, acl));
+		String qs = atd.getTokenName() + "=" + token;
+		String statusCode = AuthTokenTest.requests(this.atHostname, "/q_escape_ignore", qs, null);
+		assertEquals("404", statusCode);
+		
+		statusCode = AuthTokenTest.requests(this.atHostname, "/q_escape_ignore/world/", qs, null);
+		assertEquals("404", statusCode);
+	}
 }

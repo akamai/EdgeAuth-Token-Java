@@ -42,7 +42,7 @@ class AuthTokenException extends Exception {
 
 public class AuthToken {
     public static Long NOW = 0L;
-    public static char ACL_DELIMITER = '!';
+    public static String ACL_DELIMITER = "!";
     
     private String tokenType;
     private String tokenName;
