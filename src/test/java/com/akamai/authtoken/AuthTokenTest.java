@@ -105,7 +105,7 @@ public class AuthTokenTest {
 		sb.append("Host: ");
 		sb.append(hostname);
 		sb.append("\r\n");
-		if (header != null && !header.isEmpty()) {
+		if (header != null && header != "") {
 			sb.append(header);
 			sb.append("\r\n");
 		}
@@ -121,9 +121,12 @@ public class AuthTokenTest {
 		String statusCode = "";
 		try {
 			statusCode = rd.readLine().split(" ")[1];
-		} catch (Exception e) {}
+		} catch (Exception e) { 
+			System.out.println(e.getMessage());
+		} finally {
+			rd.close();
+		}
 		
-		rd.close();
 		inStream.close();
 		request.close();
 		socket.close();
@@ -318,5 +321,25 @@ public class AuthTokenTest {
 		
 		statusCode = AuthTokenTest.requests(this.atHostname, "/q_escape_ignore/world/", qs, null);
 		assertEquals("404", statusCode);
+	}
+	
+	@Test 
+	public void test_exceptions() {
+		try {
+			AuthToken att = new AuthTokenBuilder()
+					// .key(this.atEncryptionKey)
+					.windowSeconds(AuthTokenTest.DEFAULT_WINDOW_SECONDS)
+					.build();
+		} catch(AuthTokenException ae) {
+			assertEquals(ae.getMessage(), "You must provide a secret in order to generate a new token.");
+		}
+		try {
+			AuthToken att = new AuthTokenBuilder()
+					 .key(this.atEncryptionKey)
+//					.windowSeconds(AuthTokenTest.DEFAULT_WINDOW_SECONDS)
+					.build();
+		} catch(AuthTokenException ae) {
+			assertEquals(ae.getMessage(), "You must provide an expiration time or a duration window ( > 0 )");
+		}		
 	}
 }

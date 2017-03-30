@@ -136,7 +136,7 @@ public class AuthToken {
             throw new AuthTokenException("Token will have already expired.");
         }
 
-        if (path.isEmpty()) {
+        if (path == null || path == "") {
             if (isUrl) {
                 throw new AuthTokenException("You must provide a URL.");
             } else {
@@ -253,13 +253,13 @@ public class AuthToken {
         this.tokenType = tokenType;
     }
     public void setTokenName(String tokenName) throws AuthTokenException {
-        if (tokenName.isEmpty()) {
+        if (tokenName == null || tokenName == "") {
             throw new AuthTokenException("You must provide a token name.");
         }
         this.tokenName = tokenName;
     }
     public void setKey(String key) throws AuthTokenException {
-        if (key.isEmpty()) {
+        if (key == null || key == "") {
             throw new AuthTokenException("You must provide a secret in order to generate a new token.");
         }
         this.key = key;
