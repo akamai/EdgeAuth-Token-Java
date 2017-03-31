@@ -238,17 +238,9 @@ public class AuthToken {
         return generateToken(acl, false);
     }
 
-    public static void main(String[] args) throws AuthTokenException {
-        
-        AuthToken at = new AuthTokenBuilder()
-                .key("abcd1234")
-                .windowSeconds(50000)
-                .escapeEarly(false)
-                .build();
-        System.out.println(at.key);
-        System.out.println(at.generateURLToken("/q_ignore"));
-    }
-
+    /***************
+    * Setter/Getter
+    ****************/
     public void setTokenType(String tokenType) {
         this.tokenType = tokenType;
     }
