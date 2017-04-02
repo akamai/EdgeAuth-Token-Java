@@ -12,7 +12,6 @@ import java.util.Map;
 import static org.junit.Assert.*;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 
@@ -29,17 +28,19 @@ public class AuthTokenTest {
 	private String atSalt;
 	
 	
-	@BeforeClass
+	@Before
 	public void setUp() throws AuthTokenException {
-		if(setUpIsDone) {
+		if (setUpIsDone) {
 			return;
-		}		
-		if (System.getenv("TEST_MODE").equalsIgnoreCase("TRAVIS")) {
+		}
+		Map<String, String> env = System.getenv();
+		
+		if (env.get("TEST_MODE") != null && env.get("TEST_MODE") == "TRAVIS") {
 			// $ export TEST_MODE=TRAVIS
-			this.atHostname = System.getenv("AT_HOSTNAME");
-			this.atEncryptionKey = System.getenv("AT_ENCRYPTION_KEY");
-			this.atTransitionKey = System.getenv("AT_TRANSITION_KEY");
-			this.atSalt = System.getenv("AT_SALT_KEY");
+			this.atHostname = env.get("AT_HOSTNAME");
+			this.atEncryptionKey = env.get("AT_ENCRYPTION_KEY");
+			this.atTransitionKey = env.get("AT_TRANSITION_KEY");
+			this.atSalt = env.get("AT_SALT_KEY");
 		} else {
 			// this.atHostname = Secret.AT_HOSTNAME;
 			// this.atEncryptionKey = Secret.AT_ENCRYPTION_KEY;
