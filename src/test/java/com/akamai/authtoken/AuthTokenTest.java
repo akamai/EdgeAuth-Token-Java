@@ -17,12 +17,12 @@ import org.junit.Test;
 
 
 public class AuthTokenTest {
+	private static boolean setUpIsDone = false;
+
 	private static long DEFAULT_WINDOW_SECONDS = 500L;
-	
 	private AuthToken at;
 	private AuthToken cat;
 	private AuthToken hat;
-	
 	private String atHostname;
 	private String atEncryptionKey;
 	private String atTransitionKey;
@@ -31,6 +31,9 @@ public class AuthTokenTest {
 	
 	@BeforeClass
 	public void setUp() throws AuthTokenException {
+		if(setUpIsDone) {
+			return;
+		}		
 		if (System.getenv("TEST_MODE").equalsIgnoreCase("TRAVIS")) {
 			// $ export TEST_MODE=TRAVIS
 			this.atHostname = System.getenv("AT_HOSTNAME");
@@ -58,6 +61,8 @@ public class AuthTokenTest {
 				.windowSeconds(AuthTokenTest.DEFAULT_WINDOW_SECONDS)
 				.algorithm("md5")
 				.build();
+		
+		setUpIsDone = true;
 	}
 	
 	@After
