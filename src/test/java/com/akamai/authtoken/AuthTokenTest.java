@@ -34,17 +34,17 @@ public class AuthTokenTest {
 		
 		if (env.get("TEST_MODE") == "TRAVIS") {
 			// $ export TEST_MODE=TRAVIS
-			
 			this.atHostname = env.get("AT_HOSTNAME");
 			this.atEncryptionKey = env.get("AT_ENCRYPTION_KEY");
 			this.atTransitionKey = env.get("AT_TRANSITION_KEY");
 			this.atSalt = env.get("AT_SALT_KEY");
-			System.out.println("Hello" + this.atHostname);
+			System.out.println("hello");
 		} else {
 			// this.atHostname = Secret.AT_HOSTNAME;
 			// this.atEncryptionKey = Secret.AT_ENCRYPTION_KEY;
 			// this.atTransitionKey = Secret.AT_TRANSITION_KEY;
 			// this.atSalt = Secret.AT_SALT_KEY;
+			System.out.println("world");
 		}
 		
 		this.at = new AuthTokenBuilder()
