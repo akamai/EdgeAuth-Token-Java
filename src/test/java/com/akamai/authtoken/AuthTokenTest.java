@@ -40,10 +40,10 @@ public class AuthTokenTest {
 			this.atSalt = env.get("AT_SALT_KEY");
 		} else {
 			// Secret Class
-			this.atHostname = Secret.AT_HOSTNAME;
-			this.atEncryptionKey = Secret.AT_ENCRYPTION_KEY;
-			this.atTransitionKey = Secret.AT_TRANSITION_KEY;
-			this.atSalt = Secret.AT_SALT_KEY;
+			// this.atHostname = Secret.AT_HOSTNAME;
+			// this.atEncryptionKey = Secret.AT_ENCRYPTION_KEY;
+			// this.atTransitionKey = Secret.AT_TRANSITION_KEY;
+			// this.atSalt = Secret.AT_SALT_KEY;
 		}
 		
 		this.at = new AuthTokenBuilder()
