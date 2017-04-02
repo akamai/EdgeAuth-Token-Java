@@ -35,7 +35,7 @@ public class AuthTokenTest {
 		}
 		Map<String, String> env = System.getenv();
 		
-		if (env.get("TEST_MODE") != null && env.get("TEST_MODE") == "TRAVIS") {
+		if (env.get("TEST_MODE") != null && env.get("TEST_MODE").equalsIgnoreCase("TRAVIS")) {
 			// $ export TEST_MODE=TRAVIS
 			this.atHostname = env.get("AT_HOSTNAME");
 			this.atEncryptionKey = env.get("AT_ENCRYPTION_KEY");
