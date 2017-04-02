@@ -39,18 +39,10 @@ public class AuthTokenTest {
 			this.atTransitionKey = env.get("AT_TRANSITION_KEY");
 			this.atSalt = env.get("AT_SALT_KEY");
 		} else {
-			try {
-				Class.forName("com.akamai.authtoken.Secret");
-				this.atHostname = Secret.AT_HOSTNAME;
-				this.atEncryptionKey = Secret.AT_ENCRYPTION_KEY;
-				this.atTransitionKey = Secret.AT_TRANSITION_KEY;
-				this.atSalt = Secret.AT_SALT_KEY;
-			} catch( ClassNotFoundException e ) {
-				this.atHostname = SecretSample.AT_HOSTNAME;
-				this.atEncryptionKey = SecretSample.AT_ENCRYPTION_KEY;
-				this.atTransitionKey = SecretSample.AT_TRANSITION_KEY;
-				this.atSalt = SecretSample.AT_SALT_KEY;
-			}
+			// this.atHostname = Secret.AT_HOSTNAME;
+			// this.atEncryptionKey = Secret.AT_ENCRYPTION_KEY;
+			// this.atTransitionKey = Secret.AT_TRANSITION_KEY;
+			// this.atSalt = Secret.AT_SALT_KEY;
 		}
 		
 		this.at = new AuthTokenBuilder()
