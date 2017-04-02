@@ -15,6 +15,12 @@ cache:
   directories:
     - $HOME/.gradle/caches/
     - $HOME/.gradle/wrapper/
+  
+before_script:
+  - git fetch
+  - git checkout -b gh-pages
+  - git merge origin/master
+  - git rm --cached --ignore-unmatch index.html
 
 script:
   - export TEST_MODE=TRAVIS
@@ -23,3 +29,10 @@ script:
   - export AT_TRANSITION_KEY=$AT_TRANSITION_KEY
   - export AT_SALT=$AT_SALT
   - gradle test
+
+after_script:
+  - git add .
+  - git config user.email $GIT_EMAIL
+  - git config user.name $GIT_NAME
+  - git commit -m 'updating output'
+  - git push -f $GIT_URL gh-pages > /dev/null 2>&1
