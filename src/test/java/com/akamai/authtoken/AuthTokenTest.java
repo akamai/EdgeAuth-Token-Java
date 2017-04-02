@@ -30,14 +30,13 @@ public class AuthTokenTest {
 	
 	@Before
 	public void setUp() throws AuthTokenException {
-		Map<String, String> env = System.getenv();
-		
-		if (env.get("TEST_MODE") == "TRAVIS") {
+		if (System.getenv("TEST_MODE") == "TRAVIS") {
+			
 			// $ export TEST_MODE=TRAVIS
-			this.atHostname = env.get("AT_HOSTNAME");
-			this.atEncryptionKey = env.get("AT_ENCRYPTION_KEY");
-			this.atTransitionKey = env.get("AT_TRANSITION_KEY");
-			this.atSalt = env.get("AT_SALT_KEY");
+			this.atHostname = System.getenv("AT_HOSTNAME");
+			this.atEncryptionKey = System.getenv("AT_ENCRYPTION_KEY");
+			this.atTransitionKey = System.getenv("AT_TRANSITION_KEY");
+			this.atSalt = System.getenv("AT_SALT_KEY");
 			System.out.println("hello");
 		} else {
 			// this.atHostname = Secret.AT_HOSTNAME;
