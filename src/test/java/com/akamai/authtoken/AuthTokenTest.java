@@ -12,6 +12,7 @@ import java.util.Map;
 import static org.junit.Assert.*;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 
@@ -28,12 +29,9 @@ public class AuthTokenTest {
 	private String atSalt;
 	
 	
-	@Before
+	@BeforeClass
 	public void setUp() throws AuthTokenException {
-		System.out.println("HEY");
-		System.out.println(System.getenv("TEST_MODE"));
-
-		if (System.getenv("TEST_MODE") == "TRAVIS") {
+		if (System.getenv("TEST_MODE").equalsIgnoreCase("TRAVIS")) {
 			// $ export TEST_MODE=TRAVIS
 			this.atHostname = System.getenv("AT_HOSTNAME");
 			this.atEncryptionKey = System.getenv("AT_ENCRYPTION_KEY");
