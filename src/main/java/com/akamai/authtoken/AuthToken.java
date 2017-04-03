@@ -91,6 +91,15 @@ public class AuthToken {
         this.setVerbose(verbose);
     }
 
+    public static String join(String delimiter, String[] lists) {
+        StringBuilder sb = new StringBuilder();
+		for (String list : lists) {
+			if (sb.length() > 0) sb.append(delimiter);
+			sb.append(list);
+		}
+        return sb.toString();
+    }
+
     private String escapeEarly(final String text) {
         if (this.escapeEarly == true) {
             try {

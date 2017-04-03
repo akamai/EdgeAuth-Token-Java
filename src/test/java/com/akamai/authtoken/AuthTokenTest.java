@@ -7,6 +7,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
 import java.util.Map;
 
 import static org.junit.Assert.*;
@@ -310,8 +311,14 @@ public class AuthTokenTest {
 				.key(this.atEncryptionKey)
 				.windowSeconds(AuthTokenTest.DEFAULT_WINDOW_SECONDS)
 				.build();
-		String acl[] = new String[] { "/q_escape_ignore", "/q_escape_ignore/*" };
-		String token = atd.generateACLToken(String.join(AuthToken.ACL_DELIMITER, acl));
+		String acl[] = { "/q_escape_ignore", "/q_escape_ignore/*" };
+		
+		// For Java 8
+		// String token = atd.generateACLToken(String.join(AuthToken.ACL_DELIMITER, acl));
+		
+		// For All
+		String token = atd.generateACLToken(AuthToken.join(AuthToken.ACL_DELIMITER, acl));
+		
 		String qs = atd.getTokenName() + "=" + token;
 		String statusCode = AuthTokenTest.requests(this.atHostname, "/q_escape_ignore", qs, null);
 		assertEquals("404", statusCode);
