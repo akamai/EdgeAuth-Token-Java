@@ -122,12 +122,12 @@ public class AuthToken {
     private String generateToken(String path, boolean isUrl) throws AuthTokenException {
         if (this.startTime == AuthToken.NOW) {
             this.startTime = Calendar.getInstance(TimeZone.getTimeZone("UTC")).getTimeInMillis() / 1000L;
-        } else if(this.startTime != null && this.startTime > 0) {
+        } else if(this.startTime != null && this.startTime < 0) {
             throw new AuthTokenException("startTime must be ( > 0 )");
         }
 
         if (this.endTime == null) {
-            if (this.windowSeconds != null && this.windowSeconds > 0) {
+            if (this.windowSeconds != null && this.windowSeconds < 0) {
                 if (this.startTime == null) {
                     this.endTime = (Calendar.getInstance(TimeZone.getTimeZone("UTC")).getTimeInMillis() / 1000L) +
                         this.windowSeconds;

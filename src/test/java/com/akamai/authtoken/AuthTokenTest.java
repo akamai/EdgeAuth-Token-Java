@@ -27,7 +27,6 @@ public class AuthTokenTest {
 	private String atTransitionKey;
 	private String atSalt;
 	
-	
 	@Before
 	public void setUp() throws AuthTokenException {
 		Map<String, String> env = System.getenv();
