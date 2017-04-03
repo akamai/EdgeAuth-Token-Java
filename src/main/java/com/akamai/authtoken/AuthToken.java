@@ -34,6 +34,8 @@ import javax.xml.bind.DatatypeConverter;
 
 
 class AuthTokenException extends Exception {
+    private static final long serialVersionUID = 1L;
+
     public AuthTokenException(String msg) {
         super(msg);
     }
@@ -127,7 +129,7 @@ public class AuthToken {
         }
 
         if (this.endTime == null) {
-            if (this.windowSeconds != null && this.windowSeconds < 0) {
+            if (this.windowSeconds != null && this.windowSeconds > 0) {
                 if (this.startTime == null) {
                     this.endTime = (Calendar.getInstance(TimeZone.getTimeZone("UTC")).getTimeInMillis() / 1000L) +
                         this.windowSeconds;
