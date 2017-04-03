@@ -16,12 +16,12 @@ import org.junit.Test;
 
 
 public class AuthTokenTest {
-	private static boolean setUpIsDone = false;
-
 	private static long DEFAULT_WINDOW_SECONDS = 500L;
+
 	private AuthToken at;
 	private AuthToken cat;
 	private AuthToken hat;
+
 	private String atHostname;
 	private String atEncryptionKey;
 	private String atTransitionKey;
@@ -30,13 +30,9 @@ public class AuthTokenTest {
 	
 	@Before
 	public void setUp() throws AuthTokenException {
-		if (setUpIsDone) {
-			return;
-		}
 		Map<String, String> env = System.getenv();
 		
-		if (env.get("TEST_MODE") != null && env.get("TEST_MODE").equalsIgnoreCase("TRAVIS")) {
-			// $ export TEST_MODE=TRAVIS
+		if (env.get("TEST_MODE") == "TRAVIS") {
 			this.atHostname = env.get("AT_HOSTNAME");
 			this.atEncryptionKey = env.get("AT_ENCRYPTION_KEY");
 			this.atTransitionKey = env.get("AT_TRANSITION_KEY");
@@ -62,8 +58,6 @@ public class AuthTokenTest {
 				.windowSeconds(AuthTokenTest.DEFAULT_WINDOW_SECONDS)
 				.algorithm("md5")
 				.build();
-		
-		setUpIsDone = true;
 	}
 	
 	@After
