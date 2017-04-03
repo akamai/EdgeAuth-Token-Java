@@ -7,7 +7,6 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
-import java.util.ArrayList;
 import java.util.Map;
 
 import static org.junit.Assert.*;
@@ -312,7 +311,7 @@ public class AuthTokenTest {
 				.windowSeconds(AuthTokenTest.DEFAULT_WINDOW_SECONDS)
 				.build();
 		String acl[] = { "/q_escape_ignore", "/q_escape_ignore/*" };
-		
+
 		// For Java 8
 		// String token = atd.generateACLToken(String.join(AuthToken.ACL_DELIMITER, acl));
 		
