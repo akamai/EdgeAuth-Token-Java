@@ -12,10 +12,9 @@
 hs_err_pid*
 
 # gradle
-.classpath
-.settings
-.project
 .gradletasknamecache
+gradlew
+gradlew.bat
 .gradle/
 gradle/
 build/
@@ -24,4 +23,7 @@ bin/
 # Others
 .DS_Store
 .vscode
+.classpath
+.settings
+.project
 Secret.java
