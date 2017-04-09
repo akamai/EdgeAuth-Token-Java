@@ -1,91 +1,34 @@
-// First, apply the publishing plugin
-buildscript {
-  repositories {
-    maven {
-      url "https://plugins.gradle.org/m2/"
-    }
-  }
-  dependencies {
-    classpath "com.gradle.publish:plugin-publish-plugin:0.9.7"
-  }
+plugins {
+    id 'java-gradle-plugin'
+    id 'com.gradle.plugin-publish' version '0.9.7'
 }
 
-apply plugin: "com.gradle.plugin-publish"
-// Apply other plugins here, e.g. java plugin for a plugin written in java or
-// the groovy plugin for a plugin written in groovy
-
-// If your plugin has any external java dependencies, Gradle will attempt to
-// downloaded them from JCenter for anyone using the plugins DSL
-// so you should probably use JCenter for dependency resolution in your own
-// project.
 repositories {
   jcenter()
 }
 
+apply plugin: 'maven-publish'
+apply plugin: 'com.gradle.plugin-publish'
+
 dependencies {
   compile gradleApi()
-  compile localGroovy() //not needed for Java plugins
-  // other dependencies that your plugin requires
 
-  // The production code uses the SLF4J logging API at compile time
-  // compile 'org.slf4j:slf4j-api:1.7.21'
-
-  // Declare the dependency for your favourite test framework you want to use in your tests.
-  // TestNG is also supported by the Gradle Test task. Just change the
-  // testCompile dependency to testCompile 'org.testng:testng:6.8.1' and add
-  // 'test.useTestNG()' to your build script.
-  testCompile 'junit:junit:4.12'
+  testCompile 'junit:junit:4.+'
 }
 
+version = "0.1"
+group = "com.akamai.open"
+
 pluginBundle {
-  // These settings are set for the whole plugin bundle
   website = 'https://github.com/AstinCHOI/Akamai-AuthToken-Java'
   vcsUrl = 'https://github.com/AstinCHOI/Akamai-AuthToken-Java'
-
-  // tags and description can be set for the whole bundle here, but can also
-  // be set / overridden in the config for specific plugins
-  description = 'Please visit to https://github.com/AstinCHOI/Akamai-AuthToken-Java'
-
-  // The plugins block can contain multiple plugin entries.
-  //
-  // The name for each plugin block below (greetingsPlugin, goodbyePlugin)
-  // does not affect the plugin configuration, but they need to be unique
-  // for each plugin.
-
-  // Plugin config blocks can set the id, displayName, version, description
-  // and tags for each plugin.
-
-  // id and displayName are mandatory.
-  // If no version is set, the project version will be used.
-  // If no tags or description are set, the tags or description from the
-  // pluginBundle block will be used, but they must be set in one of the
-  // two places.
+  description = 'Akamai Authorization Token for Java'
+  tags = ['akamai', 'akamai-open', 'authorization', 'token', 'authtoken', 'signed-url']
 
   plugins {
-    akamaiAuthTokenPlugin {
+    authtokenPlugin {
       id = 'com.akamai.authtoken'
       displayName = 'Akamai Authorization Token for Java'
-      tags = ['akamai', 'akamai-open', 'authorization', 'token', 'authtoken', 'signed-url']
-      version = '0.1'
     }
   }
-
-  // Optional overrides for Maven coordinates.
-  // If you have an existing plugin deployed to Bintray and would like to keep
-  // your existing group ID and artifact ID for continuity, you can specify
-  // them here.
-  //
-  // As publishing to a custom group requires manual approval by the Gradle
-  // team for security reasons, we recommend not overriding the group ID unless
-  // you have an existing group ID that you wish to keep. If not overridden,
-  // plugins will be published automatically without a manual approval process.
-  //
-  // You can also override the version of the deployed artifact here, though it
-  // defaults to the project version, which would normally be sufficient.
-
-//   mavenCoordinates {
-//     groupId = "org.samples.override"
-//     artifactId = "greeting-plugins"
-//     version = "1.4"
-//   }
 }
