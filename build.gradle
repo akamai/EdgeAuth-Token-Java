@@ -16,14 +16,14 @@ dependencies {
   testCompile 'junit:junit:4.+'
 }
 
-version = "0.1"
+version = "0.2.0"
 group = "com.akamai.open"
 
 pluginBundle {
   website = 'https://github.com/AstinCHOI/Akamai-AuthToken-Java'
   vcsUrl = 'https://github.com/AstinCHOI/Akamai-AuthToken-Java'
   description = 'Akamai Authorization Token for Java'
-  tags = ['akamai', 'akamai-open', 'authorization', 'token', 'authtoken', 'signed-url']
+  tags = ['akamai', 'akamai-open', 'authorization', 'token', 'authtoken', 'signed-url', 'java']
 
   plugins {
     authtokenPlugin {
