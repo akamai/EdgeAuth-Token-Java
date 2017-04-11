@@ -17,7 +17,7 @@ dependencies {
 }
 
 version = "0.2.0"
-group = "com.akamai.open"
+group = "com.astinchoi"
 
 pluginBundle {
   website = 'https://github.com/AstinCHOI/Akamai-AuthToken-Java'
