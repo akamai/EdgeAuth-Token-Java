@@ -11,6 +11,9 @@ Akamai-AuthToken supports Java 1.6+. (This is Akamai unofficial code)
 
 <div style="text-align:center"><img src=https://github.com/AstinCHOI/akamai-asset/blob/master/authtoken/authtoken.png?raw=true /></div>
 
+
+## Installation
+
 ## Example
 
 #### URL parameter option

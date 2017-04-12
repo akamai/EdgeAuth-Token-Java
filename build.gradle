@@ -1,23 +1,84 @@
 plugins {
-    id 'java-gradle-plugin'
-    id 'com.gradle.plugin-publish' version '0.9.7'
+  id 'com.gradle.plugin-publish' version '0.9.7'
+  id 'java-gradle-plugin'
+  id 'maven'
+  id 'maven-publish'
+  id 'signing'
 }
+
+group = "io.github.astinchoi"
+version = "0.2.0"
 
 repositories {
   jcenter()
 }
 
-apply plugin: 'maven-publish'
-apply plugin: 'com.gradle.plugin-publish'
+task javadocJar(type: Jar) {
+    classifier = 'javadoc'
+    from javadoc
+}
+
+task sourcesJar(type: Jar) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+artifacts {
+    archives javadocJar, sourcesJar
+}
+
+signing {
+    sign configurations.archives
+}
+
+uploadArchives {
+  repositories {
+    mavenDeployer {
+      beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+
+      repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
+        authentication(userName: ossrhUsername, password: ossrhPassword)
+      }
+
+      snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
+        authentication(userName: ossrhUsername, password: ossrhPassword)
+      }
+
+      pom.project {
+        name 'Akamai-AuthToken-Java'
+        packaging 'jar'
+        description 'Akamai Authorization Token for Java'
+        url 'https://github.com/AstinCHOI/Akamai-AuthToken-Java'
+
+        scm {
+          connection 'scm:git@github.com:AstinCHOI/Akamai-AuthToken-Java.git'
+          developerConnection 'scm:git@github.com:AstinCHOI/Akamai-AuthToken-Java.git'
+          url 'scm:git@github.com:AstinCHOI/Akamai-AuthToken-Java.git'
+        }
+
+        licenses {
+          license {
+            name 'The Apache License, Version 2.0'
+            url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+          }
+        }
+
+        developers {
+          developer {
+            id 'astin'
+            name 'Astin Choi'
+          }
+        }
+      }
+    }
+  }
+}
 
 dependencies {
   compile gradleApi()
 
   testCompile 'junit:junit:4.+'
 }
-
-version = "0.2.0"
-group = "com.astinchoi"
 
 pluginBundle {
   website = 'https://github.com/AstinCHOI/Akamai-AuthToken-Java'
@@ -27,7 +88,7 @@ pluginBundle {
 
   plugins {
     authtokenPlugin {
-      id = 'com.akamai.authtoken'
+      id = 'io.github.astinchoi.authtoken'
       displayName = 'Akamai Authorization Token for Java'
     }
   }

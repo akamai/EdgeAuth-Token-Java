@@ -17,7 +17,7 @@
 */
 
 
-package com.akamai.authtoken;
+package io.github.astinchoi.authtoken;
 
 import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
