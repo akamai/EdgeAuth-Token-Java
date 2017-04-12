@@ -13,8 +13,6 @@ hs_err_pid*
 
 # gradle
 .gradletasknamecache
-gradlew
-gradlew.bat
 .gradle/
 build/
 bin/
