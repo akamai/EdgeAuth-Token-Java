@@ -77,7 +77,7 @@ uploadArchives {
 dependencies {
   compile gradleApi()
 
-  testCompile 'junit:junit:4.+'
+  testCompile 'junit:junit:4.12'
 }
 
 pluginBundle {
