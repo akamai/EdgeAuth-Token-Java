@@ -1,16 +1,24 @@
 plugins {
   id 'com.gradle.plugin-publish' version '0.9.7'
+  id 'io.codearte.nexus-staging' version '0.8.0'
   id 'java-gradle-plugin'
   id 'maven'
   id 'maven-publish'
   id 'signing'
+  
 }
 
 group = "io.github.astinchoi"
-version = "0.2.1"
+archivesBaseName = "Akamai-AuthToken-Java"
+version = "0.2.4"
 
 repositories {
+  jcenter()
   mavenCentral()
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '3.5'
 }
 
 task javadocJar(type: Jar) {
@@ -28,8 +36,6 @@ artifacts {
 }
 
 signing {
-    // requires gradle.properties, 
-    // see http://www.gradle.org/docs/current/userguide/signing_plugin.html
     required {
         gradle.taskGraph.hasTask('uploadArchives')
     }
@@ -84,6 +90,10 @@ uploadArchives {
       }
     }
   }
+}
+
+nexusStaging {
+    packageGroup = "io.github.astinchoi"
 }
 
 dependencies {
