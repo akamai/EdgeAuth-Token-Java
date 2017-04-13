@@ -7,10 +7,10 @@ plugins {
 }
 
 group = "io.github.astinchoi"
-version = "0.2.0"
+version = "0.2.1"
 
 repositories {
-  jcenter()
+  mavenCentral()
 }
 
 task javadocJar(type: Jar) {
@@ -28,7 +28,19 @@ artifacts {
 }
 
 signing {
+    // requires gradle.properties, 
+    // see http://www.gradle.org/docs/current/userguide/signing_plugin.html
+    required {
+        gradle.taskGraph.hasTask('uploadArchives')
+    }
     sign configurations.archives
+}
+
+if (!hasProperty('sonatypeUsername')) {
+	ext.sonatypeUsername = ''
+}
+if (!hasProperty('sonatypePassword')) {
+	ext.sonatypePassword = ''
 }
 
 uploadArchives {
