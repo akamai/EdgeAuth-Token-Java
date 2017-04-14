@@ -23,11 +23,5 @@ script:
   - export AT_TRANSITION_KEY=$AT_TRANSITION_KEY
   - export AT_SALT=$AT_SALT
   - echo "apply plugin:" > build.gradle
-  - echo " 'java'
-repositories {
-  jcenter()
-}
-dependencies {
-  testCompile 'junit:junit:4.12'
-}" >> build.gradle
+  - echo -e " 'java'\nrepositories { jcenter() }\ndependencies { testCompile 'junit:junit:4.12' }" >> build.gradle
   - gradle test --info
