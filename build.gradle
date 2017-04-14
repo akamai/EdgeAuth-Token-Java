@@ -8,12 +8,12 @@ plugins {
 group = "io.github.astinchoi"
 version = "0.2.6"
 
-ext {
-  isBuildOnTravis = System.getenv("TEST_MODE")?.equalsIgnoreCase("travis") ?: false
-}
-
 repositories {
   mavenCentral()
+}
+
+ext {
+  isBuildOnTravis = System.getenv("TEST_MODE")?.equalsIgnoreCase("travis") ?: false
 }
 
 dependencies {
@@ -36,26 +36,12 @@ task sourcesJar(type: Jar) {
     from sourceSets.main.allSource
 }
 
-test {
-   ignoreFailures = isBuildOnTravis
-}
-
 artifacts {
     archives javadocJar, sourcesJar
 }
 
 signing {
-  required {
-        gradle.taskGraph.hasTask('uploadArchives')
-  }
   sign configurations.archives
-}
-
-if (!hasProperty('sonatypeUsername')) {
-	ext.sonatypeUsername = ''
-}
-if (!hasProperty('sonatypePassword')) {
-	ext.sonatypePassword = ''
 }
 
 uploadArchives {
