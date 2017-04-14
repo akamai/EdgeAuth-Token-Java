@@ -22,15 +22,12 @@ script:
   - export AT_ENCRYPTION_KEY=$AT_ENCRYPTION_KEY
   - export AT_TRANSITION_KEY=$AT_TRANSITION_KEY
   - export AT_SALT=$AT_SALT
-  - echo "
-> apply plugin: 'java'
->
-> repositories {
->   jcenter()
-> }
-> 
-> dependencies {
->   testCompile 'junit:junit:4.12'
-> }
-"
+  - echo "apply plugin:" > build.gradle
+  - echo " 'java'
+repositories {
+  jcenter()
+}
+dependencies {
+  testCompile 'junit:junit:4.12'
+}" >> build.gradle
   - gradle test --info
