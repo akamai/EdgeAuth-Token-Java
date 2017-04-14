@@ -12,10 +12,6 @@ repositories {
   mavenCentral()
 }
 
-ext {
-  isBuildOnTravis = System.getenv("TEST_MODE")?.equalsIgnoreCase("travis") ?: false
-}
-
 dependencies {
   compile gradleApi()
 
