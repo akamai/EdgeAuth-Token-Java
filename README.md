@@ -37,33 +37,33 @@ public class AuthTokenExample {
 
 #### URL parameter option
 ```java
-  try {
-    AuthToken at = new AuthTokenBuilder()
-        .key(encrpytionKey)
-        .windowSeconds(duration)
-        .escapeEarly(true)
-        .build();
+try {
+  AuthToken at = new AuthTokenBuilder()
+      .key(encrpytionKey)
+      .windowSeconds(duration)
+      .escapeEarly(true)
+      .build();
 
-    /******** 
-    1) Cookie 
-    *********/
-    String path = "/akamai/authtoken";
-    String token = at.generateURLToken(path);
-    String url = String.format("http(s)://%s%s", hostname, path);
-    String cookie = String.format("%s=%s", at.getTokenName(), token);
-    // => Link or Request "url" /w "cookie"
+  /******** 
+  1) Cookie 
+  *********/
+  String path = "/akamai/authtoken";
+  String token = at.generateURLToken(path);
+  String url = String.format("http(s)://%s%s", hostname, path);
+  String cookie = String.format("%s=%s", at.getTokenName(), token);
+  // => Link or Request "url" /w "cookie"
 
-    /************** 
-    2) Query String 
-    ***************/
-    String path = "/akamai/authtoken";
-    String token = at.generateURLToken(path);
-    String url = String.format("http(s)://%s%s?%s=%s", hostname, path,
-      at.getTokenName(), token);
-    // => Link or Request "url" /w Query string
-  } catch (AuthTokenException e) {
-    e.printStackTrace();
-  }
+  /************** 
+  2) Query String 
+  ***************/
+  String path = "/akamai/authtoken";
+  String token = at.generateURLToken(path);
+  String url = String.format("http(s)://%s%s?%s=%s", hostname, path,
+    at.getTokenName(), token);
+  // => Link or Request "url" /w Query string
+} catch (AuthTokenException e) {
+  e.printStackTrace();
+}
 ```
 ```java
 // In the URL option,
@@ -79,32 +79,32 @@ public class AuthTokenExample {
 
 #### ACL(Access Control List) parameter option
 ```java
-  try {
-    AuthToken at = new AuthTokenBuilder()
-        .key(encrpytionKey)
-        .windowSeconds(duration)
-        .build();
+try {
+  AuthToken at = new AuthTokenBuilder()
+      .key(encrpytionKey)
+      .windowSeconds(duration)
+      .build();
 
-    /******************
-    3) Header using '*' 
-    *******************/
-    String acl = "/akamai/authtoken/list/*"; //*/
-    String token = at.generateACLToken(acl);
-    String url = String.format("http(s)://%s%s", hostname, "/akamai/authtoken/list/something");
-    String header = String.format("%s: %s", at.getTokenName(), token);
-    // => Link or Request "url" /w "header"
+  /******************
+  3) Header using '*' 
+  *******************/
+  String acl = "/akamai/authtoken/list/*"; //*/
+  String token = at.generateACLToken(acl);
+  String url = String.format("http(s)://%s%s", hostname, "/akamai/authtoken/list/something");
+  String header = String.format("%s: %s", at.getTokenName(), token);
+  // => Link or Request "url" /w "header"
 
-    /************************* 
-    4) Cookie Delimited by '!'
-    **************************/
-    String acl2[] = { "/akamai/authtoken", "/akamai/authtoken/list/*" };
-    String token = at.generateACLToken(AuthToken.join(AuthToken.ACL_DELIMITER, acl2));
-    String url = String.format("http(s)://%s%s", hostname, "/akamai/authtoken/list/something2");
-    String cookie = String.format("%s=%s", at.getTokenName(), token);
-    // => Link or Request "url" /w "cookie"
-  } catch (AuthTokenException e) {
-    e.printStackTrace();
-  }
+  /************************* 
+  4) Cookie Delimited by '!'
+  **************************/
+  String acl2[] = { "/akamai/authtoken", "/akamai/authtoken/list/*" };
+  String token = at.generateACLToken(AuthToken.join(AuthToken.ACL_DELIMITER, acl2));
+  String url = String.format("http(s)://%s%s", hostname, "/akamai/authtoken/list/something2");
+  String cookie = String.format("%s=%s", at.getTokenName(), token);
+  // => Link or Request "url" /w "cookie"
+} catch (AuthTokenException e) {
+  e.printStackTrace();
+}
 ```
 ```java
 // In the ACL option,
