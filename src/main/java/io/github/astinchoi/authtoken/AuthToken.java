@@ -33,14 +33,6 @@ import javax.crypto.spec.SecretKeySpec;
 import javax.xml.bind.DatatypeConverter;
 
 
-class AuthTokenException extends Exception {
-    private static final long serialVersionUID = 1L;
-
-    public AuthTokenException(String msg) {
-        super(msg);
-    }
-}
-
 
 public class AuthToken {
     public static Long NOW = 0L;
@@ -353,92 +345,5 @@ public class AuthToken {
     }
     public boolean isVerbose() {
         return this.verbose;
-    }
-}
-
-
-class AuthTokenBuilder {
-    private String tokenType = null;
-    private String tokenName = "__token__";
-    private String key = null;
-    private String algorithm = "sha256";
-    private String salt = null;
-    private String ip = null;
-    private String payload = null;
-    private String sessionId = null;
-    private Long startTime = null;
-    private Long endTime = null;
-    private Long windowSeconds = null;
-    private char fieldDelimiter = '~';
-    private boolean escapeEarly = false;
-    private boolean verbose = false;
-
-
-    public AuthTokenBuilder tokenType(String tokenType) {
-        this.tokenType = tokenType;
-        return this;
-    }
-    public AuthTokenBuilder tokenName(String tokenName) {
-        this.tokenName = tokenName;
-        return this;
-    }
-    public AuthTokenBuilder key(String key) {
-        this.key = key;
-        return this;
-    }
-    public AuthTokenBuilder algorithm(String algorithm) {
-        this.algorithm = algorithm;
-        return this;
-    }
-    public AuthTokenBuilder salt(String salt) {
-        this.salt = salt;
-        return this;
-    }
-    public AuthTokenBuilder ip(String ip) {
-        this.ip = ip;
-        return this;
-    }
-    public AuthTokenBuilder payload(String payload) {
-        this.payload = payload;
-        return this;
-    }
-    public AuthTokenBuilder sessionId(String sessionId) {
-        this.sessionId = sessionId;
-        return this;
-    }
-    public AuthTokenBuilder startTime(long startTime) {
-        this.startTime = startTime;
-        return this;
-    }
-    public AuthTokenBuilder endTime(long endTime) {
-        this.endTime = endTime;
-        return this;
-    }
-    public AuthTokenBuilder windowSeconds(long windowSeconds) {
-        this.windowSeconds = windowSeconds;
-        return this;
-    }
-    public AuthTokenBuilder fieldDelimiter(char fieldDelimiter) {
-        this.fieldDelimiter = fieldDelimiter;
-        return this;
-    }
-    
-    public AuthTokenBuilder escapeEarly(boolean escapeEarly) {
-        this.escapeEarly = escapeEarly;
-        return this;
-    }
-    public AuthTokenBuilder verbose(boolean verbose) {
-        this.verbose = verbose;
-        return this;
-    }
-
-    public AuthToken build() throws AuthTokenException {
-        return new AuthToken(
-            tokenType, tokenName,
-            key, algorithm, salt,
-            ip, payload, sessionId,
-            startTime, endTime, windowSeconds,
-            fieldDelimiter, escapeEarly, verbose
-        );
     }
 }

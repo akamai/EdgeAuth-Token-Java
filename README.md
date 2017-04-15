@@ -12,7 +12,24 @@ Akamai-AuthToken supports Java 1.6+. (This is Akamai unofficial code)
 <div style="text-align:center"><img src=https://github.com/AstinCHOI/akamai-asset/blob/master/authtoken/authtoken.png?raw=true /></div>
 
 
-## Installation
+## Build
+#### Gradle
+```groovy
+dependencies {
+  compile 'io.github.astinchoi:Akamai-AuthToken-Java:0.2.6'
+}
+```
+
+#### Maven
+```xml
+<dependency>
+  <groupId>io.github.astinchoi</groupId>
+  <artifactId>Akamai-AuthToken-Java</artifactId>
+  <version>0.2.6</version>
+  <type>pom</type>
+</dependency>
+```
+
 
 ## Example
 
