@@ -241,9 +241,6 @@ public class AuthToken {
         return generateToken(acl, false);
     }
 
-    /***************
-    * Setter/Getter
-    ****************/
     public void setTokenType(String tokenType) {
         this.tokenType = tokenType;
     }
@@ -339,7 +336,6 @@ public class AuthToken {
     public char getFieldDelimiter() {
         return this.fieldDelimiter;
     }
-    
     public boolean isEscapeEarly() {
         return this.escapeEarly;
     }
