@@ -28,7 +28,7 @@ public class AuthTokenExample {
   public static void main(String[] args) {
     String hostname = "YourAkamaizedHostname";
     String encrpytionKey = "YourEncryptionKey";
-    long duration = 500L;
+    long duration = 500L; // 500 seconds
 
     // => Option Code
   }
