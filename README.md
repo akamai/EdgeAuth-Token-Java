@@ -1,7 +1,6 @@
 # Akamai-AuthToken: Akamai Authorization Token for Java
 
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.github.astinchoi/Akamai-AuthToken-Java/badge.svg)](https://maven-badges.herokuapp.com/maven-central/io.github.astinchoi/Akamai-AuthToken-Java)
-[![Javadoc](https://javadoc-emblem.rhcloud.com/doc/io.github.astinchoi/Akamai-AuthToken-Java/badge.svg)](http://www.javadoc.io/doc/io.github.astinchoi/Akamai-AuthToken-Java)
+[![Maven Central](https://img.shields.io/badge/maven%20central-0.2.7-brightgreen.svg)](http://search.maven.org/#artifactdetails%7Cio.github.astinchoi%7CAkamai-AuthToken-Java%7C0.2.7%7C)
 [![Build Status](https://travis-ci.org/AstinCHOI/Akamai-AuthToken-Java.svg?branch=master)](https://travis-ci.org/AstinCHOI/Akamai-AuthToken-Java)
 [![License](http://img.shields.io/:license-apache-blue.svg)](https://github.com/AstinCHOI/Akamai-AuthToken-Java/blob/master/LICENSE)
 
@@ -15,7 +14,7 @@ Akamai-AuthToken supports Java 1.6+. (This is Akamai unofficial code)
 
 
 ## Build
-[Click Here](https://maven-badges.herokuapp.com/maven-central/io.github.astinchoi/Akamai-AuthToken-Java)
+[Click Here](http://search.maven.org/#artifactdetails%7Cio.github.astinchoi%7CAkamai-AuthToken-Java%7C0.2.7%7C)
 
 
 ## Example
