@@ -20,81 +20,185 @@
 package io.github.astinchoi.authtoken;
 
 
+/**
+ * To build an {@link AuthToken} instance.
+ */
 public class AuthTokenBuilder {
+
+    /** select a preset. (Not Supported Yet) */
     private String tokenType = null;
+
+    /** parameter name for the new token. */
     private String tokenName = "__token__";
+
+    /** secret required to generate the token. It must be hexadecimal digit string with even-length. */
     private String key = null;
+
+    /** to use to generate the token. (sha1, sha256, or md5) */
     private String algorithm = "sha256";
+
+    /** additional data validated by the token but NOT included in the token body. It will be deprecated. */
     private String salt = null;
+
+    /** IP Address to restrict this token to. Troublesome in many cases (roaming, NAT, etc) so not often used. */
     private String ip = null;
+
+    /** additional text added to the calculated digest. */
     private String payload = null;
+
+    /** the session identifier for single use tokens or other advanced cases. */
     private String sessionId = null;
+
+    /** what is the start time? */
     private Long startTime = null;
+
+    /** when does this token expire? It overrides {@code windowSeconds} */
     private Long endTime = null;
+
+    /** How long is this token valid for? */
     private Long windowSeconds = null;
+
+    /** character used to delimit token body fields. */
     private char fieldDelimiter = '~';
+
+    /** causes strings to be url encoded before being used. */
     private boolean escapeEarly = false;
+
+    /** print all parameters. */
     private boolean verbose = false;
 
-
+    /**
+     * @param tokenType tokenType
+     * @return AuthTokenBuilder
+     */
     public AuthTokenBuilder tokenType(String tokenType) {
         this.tokenType = tokenType;
         return this;
     }
+
+    /**
+     * @param tokenName tokenName
+     * @return AuthTokenBuilder
+     */
     public AuthTokenBuilder tokenName(String tokenName) {
         this.tokenName = tokenName;
         return this;
     }
+
+    /**
+     * @param key key
+     * @return AuthTokenBuilder
+     */
     public AuthTokenBuilder key(String key) {
         this.key = key;
         return this;
     }
+
+    /**
+     * @param algorithm algorithm
+     * @return AuthTokenBuilder
+     */
     public AuthTokenBuilder algorithm(String algorithm) {
         this.algorithm = algorithm;
         return this;
     }
+
+    /**
+     * @param salt salt
+     * @return AuthTokenBuilder
+     */
     public AuthTokenBuilder salt(String salt) {
         this.salt = salt;
         return this;
     }
+
+    /**
+     * @param ip ip
+     * @return AuthTokenBuilder
+     */
     public AuthTokenBuilder ip(String ip) {
         this.ip = ip;
         return this;
     }
+
+    /**
+     * @param payload payload
+     * @return AuthTokenBuilder
+     */
     public AuthTokenBuilder payload(String payload) {
         this.payload = payload;
         return this;
     }
+
+    /**
+     * @param sessionId sessionId
+     * @return AuthTokenBuilder
+     */
     public AuthTokenBuilder sessionId(String sessionId) {
         this.sessionId = sessionId;
         return this;
     }
+
+    /**
+     * @param startTime startTime
+     * @return AuthTokenBuilder
+     */
     public AuthTokenBuilder startTime(long startTime) {
         this.startTime = startTime;
         return this;
     }
+
+    /**
+     * @param endTime endTime
+     * @return AuthTokenBuilder
+     */
     public AuthTokenBuilder endTime(long endTime) {
         this.endTime = endTime;
         return this;
     }
+
+    /**
+     * @param windowSeconds windowSeconds
+     * @return AuthTokenBuilder
+     */
     public AuthTokenBuilder windowSeconds(long windowSeconds) {
         this.windowSeconds = windowSeconds;
         return this;
     }
+
+    /**
+     * @param fieldDelimiter fieldDelimiter
+     * @return AuthTokenBuilder
+     */
     public AuthTokenBuilder fieldDelimiter(char fieldDelimiter) {
         this.fieldDelimiter = fieldDelimiter;
         return this;
     }
     
+    /**
+     * @param escapeEarly escapeEarly
+     * @return AuthTokenBuilder
+     */
     public AuthTokenBuilder escapeEarly(boolean escapeEarly) {
         this.escapeEarly = escapeEarly;
         return this;
     }
+
+    /**
+     * @param verbose verbose
+     * @return AuthTokenBuilder
+     */
     public AuthTokenBuilder verbose(boolean verbose) {
         this.verbose = verbose;
         return this;
     }
 
+    /**
+     * build an {@link AuthToken} instance
+     * 
+     * @return {@link AuthToken}
+     * @throws AuthTokenException AuthTokenException
+     */
     public AuthToken build() throws AuthTokenException {
         return new AuthToken(
             tokenType, tokenName,

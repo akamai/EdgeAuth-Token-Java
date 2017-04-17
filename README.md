@@ -1,6 +1,7 @@
 # Akamai-AuthToken: Akamai Authorization Token for Java
 
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.github.astinchoi/Akamai-AuthToken-Java/badge.svg)](https://maven-badges.herokuapp.com/maven-central/io.github.astinchoi/Akamai-AuthToken-Java)
+[![Javadoc](https://javadoc-emblem.rhcloud.com/doc/io.github.astinchoi/Akamai-AuthToken-Java/badge.svg)](http://www.javadoc.io/doc/io.github.astinchoi/Akamai-AuthToken-Java)
 [![Build Status](https://travis-ci.org/AstinCHOI/Akamai-AuthToken-Java.svg?branch=master)](https://travis-ci.org/AstinCHOI/Akamai-AuthToken-Java)
 [![License](http://img.shields.io/:license-apache-blue.svg)](https://github.com/AstinCHOI/Akamai-AuthToken-Java/blob/master/LICENSE)
 
@@ -135,7 +136,7 @@ try {
 
 #### AuthToken Static Variable
 ```java
-public static Long NOW = 0L; // When using startTime
+public static final Long NOW = 0L; // When using startTime
 public static String ACL_DELIMITER = "!"; // When using ACL
 ```
 

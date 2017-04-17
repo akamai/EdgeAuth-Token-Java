@@ -33,24 +33,57 @@ import javax.crypto.spec.SecretKeySpec;
 import javax.xml.bind.DatatypeConverter;
 
 
-
+/**
+ * This is for returning authorization token string. You can build an instance 
+ * using {@link AuthTokenBuilder} and this can throw {@link AuthTokenException}.
+ */
 public class AuthToken {
-    public static Long NOW = 0L;
+    /** Current time when using startTime */
+    public static final Long NOW = 0L;
+
+    /** ! delimiter when using ACL */
     public static String ACL_DELIMITER = "!";
     
+    /** select a preset. (Not Supported Yet) */
     private String tokenType;
+
+    /** parameter name for the new token. */
     private String tokenName;
+
+    /** secret required to generate the token. It must be hexadecimal digit string with even-length. */
     private String key;
+
+    /** to use to generate the token. (sha1, sha256, or md5) */
     private String algorithm;
+
+    /** additional data validated by the token but NOT included in the token body. It will be deprecated. */
     private String salt;
+
+    /** IP Address to restrict this token to. Troublesome in many cases (roaming, NAT, etc) so not often used. */
     private String ip;
+
+    /** additional text added to the calculated digest. */
     private String payload;
+    
+    /** the session identifier for single use tokens or other advanced cases. */
     private String sessionId;
+
+    /** what is the start time? ({@code NOW} for the current time) */
     private Long startTime;
+
+    /** when does this token expire? It overrides {@code windowSeconds} */
     private Long endTime;
+
+    /** How long is this token valid for? */
     private Long windowSeconds;
+
+    /** character used to delimit token body fields. */
     private char fieldDelimiter;
+
+    /** causes strings to be url encoded before being used. */
     private boolean escapeEarly;
+
+    /** print all parameters. */
     private boolean verbose;
 
     public AuthToken(
@@ -85,16 +118,35 @@ public class AuthToken {
         this.setVerbose(verbose);
     }
 
-    public static String join(String delimiter, String[] lists) {
-        StringBuilder sb = new StringBuilder();
-		for (String list : lists) {
-			if (sb.length() > 0) sb.append(delimiter);
-			sb.append(list);
-		}
-        return sb.toString();
+    /** 
+     * Makes a string array to joined a string with delimiter.
+     * 
+     * @param delimiter {@code ACL_DELIMITER}
+     * @param lists ACL(Access Control List) string array
+     * @return joined string with delimiter
+     * @throws AuthTokenException AuthTokenException
+    */
+    public static String join(String delimiter, String[] lists) throws AuthTokenException {
+        try {
+            StringBuilder sb = new StringBuilder();
+            for (String list : lists) {
+                if (sb.length() > 0) sb.append(delimiter);
+                sb.append(list);
+            }
+            return sb.toString();
+        } catch(Exception e) {
+            throw new AuthTokenException(e.getMessage());
+        }
     }
 
-    private String escapeEarly(final String text) {
+    /**
+     * Causes strings to be 'url' encoded before being used.
+     * 
+     * @param text string
+     * @return escaped string up to {@value escapeEarly}.
+     * @throws AuthTokenException AuthTokenException
+     */
+    private String escapeEarly(final String text) throws AuthTokenException {
         if (this.escapeEarly == true) {
             try {
                 StringBuilder newText = new StringBuilder(URLEncoder.encode(text, "UTF-8"));
@@ -108,11 +160,23 @@ public class AuthToken {
                 return newText.toString();
             } catch (UnsupportedEncodingException e) {
                 return text;
+            } catch (Exception e) {
+                throw new AuthTokenException(e.getMessage());
             }
         } else {
             return text;
         }
     }
+
+    /**
+     * Generate authorization token called by
+     * {@code generateURLToken} and {@code generateACLToken}
+     * 
+     * @param url or acl path
+     * @param for url or acl to check
+     * @return authorization token string
+     * @throws AuthTokenException AuthTokenException
+     */
     private String generateToken(String path, boolean isUrl) throws AuthTokenException {
         if (this.startTime == AuthToken.NOW) {
             this.startTime = Calendar.getInstance(TimeZone.getTimeZone("UTC")).getTimeInMillis() / 1000L;
@@ -233,29 +297,61 @@ public class AuthToken {
         }
     }
 
+    /**
+     * Call {@code generateToken}
+     * 
+     * @param url a single path
+     * @return authorization token string
+     * @throws AuthTokenException AuthTokenException
+     */
     public String generateURLToken(String url) throws AuthTokenException {
         return generateToken(url, true);
     }
 
+    /**
+     * Call {@code generateToken}
+     * 
+     * @param acl access control list
+     * @return authorization token string
+     * @throws AuthTokenException AuthTokenException
+     */
     public String generateACLToken(String acl) throws AuthTokenException {
         return generateToken(acl, false);
     }
 
+    /**
+     * @param tokenType tokenType
+     */
     public void setTokenType(String tokenType) {
         this.tokenType = tokenType;
     }
+
+    /**
+     * @param tokenName tokenName
+     * @throws AuthTokenException AuthTokenException
+     */
     public void setTokenName(String tokenName) throws AuthTokenException {
         if (tokenName == null || tokenName == "") {
             throw new AuthTokenException("You must provide a token name.");
         }
         this.tokenName = tokenName;
     }
+
+    /**
+     * @param key key
+     * @throws AuthTokenException AuthTokenException
+     */
     public void setKey(String key) throws AuthTokenException {
         if (key == null || key == "") {
             throw new AuthTokenException("You must provide a secret in order to generate a new token.");
         }
         this.key = key;
     }
+
+    /**
+     * @param algorithm algorithm
+     * @throws AuthTokenException AuthTokenException
+     */
     public void setAlgorithm(String algorithm) throws AuthTokenException {
         if (!algorithm.equalsIgnoreCase("md5") &&
         !algorithm.equalsIgnoreCase("sha1") &&
@@ -269,76 +365,169 @@ public class AuthToken {
         else if (algorithm.equalsIgnoreCase("md5"))
             this.algorithm = "HmacMD5";
     }
+
+    /**
+     * @param salt salt
+     */
     public void setSalt(String salt) {
         this.salt = salt;
     }
+
+    /**
+     * @param ip ip
+     */
     public void setIp(String ip) {
         this.ip = ip;
     }
+
+    /**
+     * @param payload payload
+     */
     public void setPayload(String payload) {
         this.payload = payload;
     }
+
+    /**
+     * @param sessionId sessionId
+     */
     public void setSessionId(String sessionId) {
         this.sessionId = sessionId;
     }
+
+    /**
+     * @param startTime startTime
+     */
     public void setStartTime(Long startTime) {
         this.startTime = startTime;
     }
+
+    /**
+     * @param endTime endTime
+     */
     public void setEndTime(Long endTime) {
         this.endTime = endTime;
     }
+
+    /**
+     * @param windowSeconds windowSeconds
+     */
     public void setWindowSeconds(Long windowSeconds) {
         this.windowSeconds = windowSeconds;
     }
+
+    /**
+     * @param fieldDelimiter fieldDelimiter
+     */
     public void setFieldDelimiter(char fieldDelimiter) {
         this.fieldDelimiter = fieldDelimiter;
     }
-    
+
+    /**
+     * @param escapeEarly escapeEarly
+     */    
     public void setEscapeEarly(boolean escapeEarly) {
         this.escapeEarly = escapeEarly;
     }
+    /**
+     * @param verbose verbose
+     */
     public void setVerbose(boolean verbose) {
         this.verbose = verbose;
     }
+    
+    /**
+     * @return tokenType
+     */
     public String getTokenType() {
         return this.tokenType;
     }
+    /**
+     * @return tokenName
+     */
     public String getTokenName() {
         return this.tokenName;
     }
+
+    /**
+     * @return key
+     */
     public String getKey() {
         return this.key;
     }
+
+    /**
+     * @return algorithm
+     */
     public String getAlgorithm() {
         return this.algorithm;
     }
+
+    /**
+     * @return salt
+     */
     public String getSalt() {
         return this.salt;
     }
+
+    /**
+     * @return ip
+     */
     public String getIp() {
         return this.ip;
     }
+
+    /**
+     * @return payload
+     */
     public String getPayload() {
         return this.payload;
     }
+
+    /**
+     * @return sessionId
+     */
     public String getSessionId() {
         return this.sessionId;
     }
+
+    /**
+     * @return startTime
+     */
     public long getStartTime() {
         return this.startTime;
     }
+
+    /**
+     * @return endTime
+     */
     public long getEndTime() {
         return this.endTime;
     }
+
+    /**
+     * @return windowSeconds
+     */
     public long getwindowSeconds() {
         return this.windowSeconds;
     }
+
+    /**
+     * @return fieldDelimiter
+     */
     public char getFieldDelimiter() {
         return this.fieldDelimiter;
     }
+
+    /**
+     * @return escapeEarly
+     */
     public boolean isEscapeEarly() {
         return this.escapeEarly;
     }
+
+    /**
+     * @return verbose
+     */
     public boolean isVerbose() {
         return this.verbose;
     }

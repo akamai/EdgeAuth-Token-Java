@@ -20,9 +20,15 @@
 package io.github.astinchoi.authtoken;
 
 
+/**
+ * {@link AuthToken} exception class
+ */
 public class AuthTokenException extends Exception {
     private static final long serialVersionUID = 1L;
 
+    /**
+     * @param msg exception message
+     */
     public AuthTokenException(String msg) {
         super(msg);
     }
