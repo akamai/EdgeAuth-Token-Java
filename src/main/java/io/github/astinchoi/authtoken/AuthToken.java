@@ -203,14 +203,6 @@ public class AuthToken {
             throw new AuthTokenException("Token will have already expired.");
         }
 
-        if (path == null || path == "") {
-            if (isUrl) {
-                throw new AuthTokenException("You must provide a URL.");
-            } else {
-                throw new AuthTokenException("You must provide a ARL.");
-            }
-        }
-
         if (this.verbose) {
             System.out.println("Akamai Token Generation Parameters");
             if (isUrl) {
@@ -305,6 +297,9 @@ public class AuthToken {
      * @throws AuthTokenException AuthTokenException
      */
     public String generateURLToken(String url) throws AuthTokenException {
+        if (url == null || url == "") {
+            throw new AuthTokenException("You must provide a URL.");
+        }
         return generateToken(url, true);
     }
 
@@ -316,6 +311,9 @@ public class AuthToken {
      * @throws AuthTokenException AuthTokenException
      */
     public String generateACLToken(String acl) throws AuthTokenException {
+        if (acl == null || acl == "") {
+            throw new AuthTokenException("You must provide an ACL.");
+        }
         return generateToken(acl, false);
     }
 
@@ -353,17 +351,14 @@ public class AuthToken {
      * @throws AuthTokenException AuthTokenException
      */
     public void setAlgorithm(String algorithm) throws AuthTokenException {
-        if (!algorithm.equalsIgnoreCase("md5") &&
-        !algorithm.equalsIgnoreCase("sha1") &&
-        !algorithm.equalsIgnoreCase("sha256")) {
-            throw new AuthTokenException("Unknown Algorithm");
-        }
         if (algorithm.equalsIgnoreCase("sha256"))
             this.algorithm = "HmacSHA256";
         else if (algorithm.equalsIgnoreCase("sha1"))
             this.algorithm = "HmacSHA1";
         else if (algorithm.equalsIgnoreCase("md5"))
             this.algorithm = "HmacMD5";
+        else
+            throw new AuthTokenException("Unknown Algorithm");
     }
 
     /**

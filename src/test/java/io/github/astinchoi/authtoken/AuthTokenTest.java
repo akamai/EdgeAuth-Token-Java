@@ -37,7 +37,7 @@ public class AuthTokenTest {
 			this.atSalt = env.get("AT_SALT_KEY");
 		} else {
 			try {
-				Class<?> Secret = Class.forName("com.akamai.authtoken.Secret");
+				Class<?> Secret = Class.forName("io.github.astinchoi.authtoken.Secret");
 				
 				this.atHostname = Secret.getField("AT_HOSTNAME").get("AT_HOSTNAME").toString();
 				this.atEncryptionKey = Secret.getField("AT_ENCRYPTION_KEY").get("AT_ENCRYPTION_KEY").toString();
@@ -240,7 +240,7 @@ public class AuthTokenTest {
 		String headerPath = "/h_escape";
 		this.testCaseSet(queryPath, cookiePath, headerPath, true, true);
 
-		String queryString = "?foo=bar&hello=world";
+		String queryString = "?foo=bar&hello=world"; // # ( ) ... // URLEncoder.encode("", "UTF-8");
 		this.queryAssertEqual(queryPath + queryString, "404", true, false, null, null, true);
 		this.cookieAssertEqual(cookiePath + queryString, "404", true, false, null, null, true);
 		this.headerAssertEqual(headerPath + queryString, "404", true, false, null, null, true);
@@ -253,7 +253,7 @@ public class AuthTokenTest {
 		String headerPath = "/h";
 		this.testCaseSet(queryPath, cookiePath, headerPath, false, true);
 
-		String queryString = "?foo=bar&hello=world";
+		String queryString = "?foo=bar&hello=world"; // ...
 		this.queryAssertEqual(queryPath + queryString, "404", false, false, null, null, true);
 		this.cookieAssertEqual(cookiePath + queryString, "404", false, false, null, null, true);
 		this.headerAssertEqual(headerPath + queryString, "404", false, false, null, null, true);
@@ -344,7 +344,7 @@ public class AuthTokenTest {
 		try {
 			AuthToken att = new AuthTokenBuilder()
 					 .key(this.atEncryptionKey)
-//					.windowSeconds(AuthTokenTest.DEFAULT_WINDOW_SECONDS)
+					// .windowSeconds(AuthTokenTest.DEFAULT_WINDOW_SECONDS)
 					.build();
 		} catch(AuthTokenException ae) {
 			assertEquals(ae.getMessage(), "You must provide an expiration time or a duration window ( > 0 )");

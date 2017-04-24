@@ -1,4 +1,4 @@
-package com.akamai.authtoken;
+package io.github.astinchoi.authtoken;
 
 
 public class SecretSample {
