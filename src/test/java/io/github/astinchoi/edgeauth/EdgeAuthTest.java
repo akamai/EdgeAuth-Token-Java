@@ -273,7 +273,7 @@ public class EdgeAuthTest {
 	// 	String qs = eas.getTokenName() + "=" + token;
 	// 	String statusCode = EdgeAuthTest.requests(this.eaHostname, querySaltPath, qs, null);
 	// 	assertEquals("404", statusCode);
-	}
+	// }
 	
 	/**********
 	 * ACL TEST
