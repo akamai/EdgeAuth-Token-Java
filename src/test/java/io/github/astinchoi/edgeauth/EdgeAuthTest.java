@@ -1,4 +1,4 @@
-package io.github.astinchoi.authtoken;
+package io.github.astinchoi.edgeauth;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -15,51 +15,51 @@ import org.junit.Before;
 import org.junit.Test;
 
 
-public class AuthTokenTest {
+public class EdgeAuthTest {
 	private static long DEFAULT_WINDOW_SECONDS = 500L;
 
-	private AuthToken at;
-	private AuthToken cat;
-	private AuthToken hat;
+	private EdgeAuth ea;
+	private EdgeAuth cea;
+	private EdgeAuth hea;
 
-	private String atHostname;
-	private String atEncryptionKey;
-	private String atTransitionKey;
-	private String atSalt;
+	private String eaHostname;
+	private String eaEncryptionKey;
+	private String eaTransitionKey;
+	private String eaSalt;
 	
 	@Before
-	public void setUp() throws AuthTokenException {
+	public void setUp() throws EdgeAuthException {
 		Map<String, String> env = System.getenv();
 		if (env.get("TEST_MODE") != null && env.get("TEST_MODE").equalsIgnoreCase("travis")) {
-			this.atHostname = env.get("AT_HOSTNAME");
-			this.atEncryptionKey = env.get("AT_ENCRYPTION_KEY");
-			this.atTransitionKey = env.get("AT_TRANSITION_KEY");
-			this.atSalt = env.get("AT_SALT_KEY");
+			this.eaHostname = env.get("ET_HOSTNAME");
+			this.eaEncryptionKey = env.get("ET_ENCRYPTION_KEY");
+			this.eaTransitionKey = env.get("ET_TRANSITION_KEY");
+			this.eaSalt = env.get("ET_SALT_KEY");
 		} else {
 			try {
-				Class<?> Secret = Class.forName("io.github.astinchoi.authtoken.Secret");
+				Class<?> Secret = Class.forName("io.github.astinchoi.edgeauth.Secret");
 				
-				this.atHostname = Secret.getField("AT_HOSTNAME").get("AT_HOSTNAME").toString();
-				this.atEncryptionKey = Secret.getField("AT_ENCRYPTION_KEY").get("AT_ENCRYPTION_KEY").toString();
-				this.atTransitionKey = Secret.getField("AT_TRANSITION_KEY").get("AT_TRANSITION_KEY").toString();
-				this.atSalt = Secret.getField("AT_SALT_KEY").get("AT_SALT_KEY").toString();
+				this.eaHostname = Secret.getField("ET_HOSTNAME").get("ET_HOSTNAME").toString();
+				this.eaEncryptionKey = Secret.getField("ET_ENCRYPTION_KEY").get("ET_ENCRYPTION_KEY").toString();
+				this.eaTransitionKey = Secret.getField("ET_TRANSITION_KEY").get("ET_TRANSITION_KEY").toString();
+				this.eaSalt = Secret.getField("ET_SALT_KEY").get("ET_SALT_KEY").toString();
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
 		
-		this.at = new AuthTokenBuilder()
-				.key(this.atEncryptionKey)
-				.windowSeconds(AuthTokenTest.DEFAULT_WINDOW_SECONDS)
+		this.ea = new EdgeAuthBuilder()
+				.key(this.eaEncryptionKey)
+				.windowSeconds(EdgeAuthTest.DEFAULT_WINDOW_SECONDS)
 				.build();
-		this.cat = new AuthTokenBuilder()
-				.key(this.atEncryptionKey)
-				.windowSeconds(AuthTokenTest.DEFAULT_WINDOW_SECONDS)
+		this.cea = new EdgeAuthBuilder()
+				.key(this.eaEncryptionKey)
+				.windowSeconds(EdgeAuthTest.DEFAULT_WINDOW_SECONDS)
 				.algorithm("sha1")
 				.build();
-		this.hat = new AuthTokenBuilder()
-				.key(this.atEncryptionKey)
-				.windowSeconds(AuthTokenTest.DEFAULT_WINDOW_SECONDS)
+		this.hea = new EdgeAuthBuilder()
+				.key(this.eaEncryptionKey)
+				.windowSeconds(EdgeAuthTest.DEFAULT_WINDOW_SECONDS)
 				.algorithm("md5")
 				.build();
 	}
@@ -67,19 +67,19 @@ public class AuthTokenTest {
 	@After
 	public void tearDown() {}
 	
-	private void tokenSetting(char ttype, boolean escapeEarly, boolean transition) throws AuthTokenException {
-		AuthToken t = null;
+	private void tokenSetting(char ttype, boolean escapeEarly, boolean transition) throws EdgeAuthException {
+		EdgeAuth t = null;
 		
 		if (ttype == 'q') {
-			t = this.at;
+			t = this.ea;
 		} else if(ttype == 'c') {
-			t = this.cat;
+			t = this.cea;
 		} else if(ttype == 'h') {
-			t = this.hat;
+			t = this.hea;
 		}
 		
 		if (transition) {
-			t.setKey(this.atTransitionKey);
+			t.setKey(this.eaTransitionKey);
 		}
 		
 		t.setEscapeEarly(escapeEarly);
@@ -136,61 +136,61 @@ public class AuthTokenTest {
 		return statusCode;
 	}
 	
-	private void queryAssertEqual(String path, String expacted, boolean escapeEarly, boolean transition, String payload, String sessionId, boolean isUrl) throws AuthTokenException, UnknownHostException, IOException { 
+	private void queryAssertEqual(String path, String expacted, boolean escapeEarly, boolean transition, String payload, String sessionId, boolean isUrl) throws EdgeAuthException, UnknownHostException, IOException { 
 		this.tokenSetting('q', escapeEarly, transition);
 		
-		at.setPayload(payload);
-		at.setSessionId(sessionId);
+		ea.setPayload(payload);
+		ea.setSessionId(sessionId);
 		
 		String token = "";
 		if (isUrl) {
-			token = this.at.generateURLToken(path);
+			token = this.ea.generateURLToken(path);
 		} else {
-			token = this.at.generateACLToken(path);
+			token = this.ea.generateACLToken(path);
 		}
 
-		String qs = this.at.getTokenName() + "=" + token;
-		String statusCode = AuthTokenTest.requests(this.atHostname, path, qs, null);
+		String qs = this.ea.getTokenName() + "=" + token;
+		String statusCode = EdgeAuthTest.requests(this.eaHostname, path, qs, null);
 		assertEquals(expacted, statusCode);
 	}
 	
-	private void cookieAssertEqual(String path, String expacted, boolean escapeEarly, boolean transition, String payload, String sessionId, boolean isUrl) throws AuthTokenException, UnknownHostException, IOException { 
+	private void cookieAssertEqual(String path, String expacted, boolean escapeEarly, boolean transition, String payload, String sessionId, boolean isUrl) throws EdgeAuthException, UnknownHostException, IOException { 
 		this.tokenSetting('c', escapeEarly, transition);
 		
-		cat.setPayload(payload);
-		cat.setSessionId(sessionId);
+		cea.setPayload(payload);
+		cea.setSessionId(sessionId);
 		
 		String token = "";
 		if (isUrl) {
-			token = this.cat.generateURLToken(path);
+			token = this.cea.generateURLToken(path);
 		} else {
-			token = this.cat.generateACLToken(path);
+			token = this.cea.generateACLToken(path);
 		}
 
-		String cookie = "Cookie: " + this.cat.getTokenName() + "=" + token;
-		String statusCode = AuthTokenTest.requests(this.atHostname, path, null, cookie);
+		String cookie = "Cookie: " + this.cea.getTokenName() + "=" + token;
+		String statusCode = EdgeAuthTest.requests(this.eaHostname, path, null, cookie);
 		assertEquals(expacted, statusCode);
 	}
 	
-	private void headerAssertEqual(String path, String expacted, boolean escapeEarly, boolean transition, String payload, String sessionId, boolean isUrl) throws AuthTokenException, UnknownHostException, IOException { 
+	private void headerAssertEqual(String path, String expacted, boolean escapeEarly, boolean transition, String payload, String sessionId, boolean isUrl) throws EdgeAuthException, UnknownHostException, IOException { 
 		this.tokenSetting('h', escapeEarly, transition);
 		
-		hat.setPayload(payload);
-		hat.setSessionId(sessionId);
+		hea.setPayload(payload);
+		hea.setSessionId(sessionId);
 		
 		String token = "";
 		if (isUrl) {
-			token = this.hat.generateURLToken(path);
+			token = this.hea.generateURLToken(path);
 		} else {
-			token = this.hat.generateACLToken(path);
+			token = this.hea.generateACLToken(path);
 		}
 
-		String header = this.hat.getTokenName() + ":" + token;
-		String statusCode = AuthTokenTest.requests(this.atHostname, path, null, header);
+		String header = this.hea.getTokenName() + ":" + token;
+		String statusCode = EdgeAuthTest.requests(this.eaHostname, path, null, header);
 		assertEquals(expacted, statusCode);
 	}
 	
-	private void testCaseSet(String queryPath, String cookiePath, String headerPath, boolean escapeEarly, boolean isUrl) throws UnknownHostException, AuthTokenException, IOException {
+	private void testCaseSet(String queryPath, String cookiePath, String headerPath, boolean escapeEarly, boolean isUrl) throws UnknownHostException, EdgeAuthException, IOException {
 		// General Test
 		this.queryAssertEqual(queryPath, "404", escapeEarly, false, null, null, isUrl);
 		this.cookieAssertEqual(cookiePath, "404", escapeEarly, false, null, null, isUrl);
@@ -224,17 +224,17 @@ public class AuthTokenTest {
 	 * URL TEST
 	 **********/
 	@Test
-	public void test_url_escape_on__ignoreQuery_yes() throws UnknownHostException, AuthTokenException, IOException {
+	public void test_url_escape_on__ignoreQuery_yes() throws UnknownHostException, EdgeAuthException, IOException {
 		this.testCaseSet("/q_escape_ignore", "/c_escape_ignore", "/h_escape_ignore", true, true);
 	}
 	
 	@Test
-	public void test_url_escape_off__ignoreQuery_yes() throws UnknownHostException, AuthTokenException, IOException {
+	public void test_url_escape_off__ignoreQuery_yes() throws UnknownHostException, EdgeAuthException, IOException {
 		this.testCaseSet("/q_ignore", "/c_ignore", "/h_ignore", false, true);
 	}
 	
 	@Test
-	public void test_url_escape_on__ignoreQuery_no() throws UnknownHostException, AuthTokenException, IOException {
+	public void test_url_escape_on__ignoreQuery_no() throws UnknownHostException, EdgeAuthException, IOException {
 		String queryPath = "/q_escape";
 		String cookiePath = "/c_escape";
 		String headerPath = "/h_escape";
@@ -247,7 +247,7 @@ public class AuthTokenTest {
 	}
 	
 	@Test
-	public void test_url_escape_off__ignoreQuery_no() throws UnknownHostException, AuthTokenException, IOException {
+	public void test_url_escape_off__ignoreQuery_no() throws UnknownHostException, EdgeAuthException, IOException {
 		String queryPath = "/q";
 		String cookiePath = "/c";
 		String headerPath = "/h";
@@ -260,17 +260,17 @@ public class AuthTokenTest {
 	}
 	
 	@Test
-	public void test_url_query_escape_on__ignore_yes_with_salt() throws UnknownHostException, AuthTokenException, IOException {
+	public void test_url_query_escape_on__ignore_yes_with_salt() throws UnknownHostException, EdgeAuthException, IOException {
 		String querySaltPath = "/salt";
-		AuthToken ats = new AuthTokenBuilder()
-				.key(this.atEncryptionKey)
-				.salt(this.atSalt)
-				.windowSeconds(AuthTokenTest.DEFAULT_WINDOW_SECONDS)
+		EdgeAuth eas = new EdgeAuthBuilder()
+				.key(this.eaEncryptionKey)
+				.salt(this.eaSalt)
+				.windowSeconds(EdgeAuthTest.DEFAULT_WINDOW_SECONDS)
 				.escapeEarly(true)
 				.build();
-		String token = ats.generateURLToken(querySaltPath);
-		String qs = ats.getTokenName() + "=" + token;
-		String statusCode = AuthTokenTest.requests(this.atHostname, querySaltPath, qs, null);
+		String token = eas.generateURLToken(querySaltPath);
+		String qs = eas.getTokenName() + "=" + token;
+		String statusCode = EdgeAuthTest.requests(this.eaHostname, querySaltPath, qs, null);
 		assertEquals("404", statusCode);
 	}
 	
@@ -278,76 +278,76 @@ public class AuthTokenTest {
 	 * ACL TEST
 	 **********/
 	@Test
-	public void test_acl_escape_on__ignoreQuery_yes() throws UnknownHostException, AuthTokenException, IOException {
+	public void test_acl_escape_on__ignoreQuery_yes() throws UnknownHostException, EdgeAuthException, IOException {
 		this.testCaseSet("/q_escape_ignore", "/c_escape_ignore", "/h_escape_ignore", false, false);
 	}
 	
 	@Test
-	public void test_acl_escape_off__ignoreQuery_yes() throws UnknownHostException, AuthTokenException, IOException {
+	public void test_acl_escape_off__ignoreQuery_yes() throws UnknownHostException, EdgeAuthException, IOException {
 		this.testCaseSet("/q_ignore", "/c_ignore", "/h_ignore", false, false);
 	}
 	
 	@Test
-	public void test_acl_escape_on__ignoreQuery_no() throws UnknownHostException, AuthTokenException, IOException {
+	public void test_acl_escape_on__ignoreQuery_no() throws UnknownHostException, EdgeAuthException, IOException {
 		this.testCaseSet("/q_escape", "/c_escape", "/h_escape", false, false);
 	}
 	
 	@Test
-	public void test_acl_escape_off__ignoreQuery_no() throws UnknownHostException, AuthTokenException, IOException {
+	public void test_acl_escape_off__ignoreQuery_no() throws UnknownHostException, EdgeAuthException, IOException {
 		this.testCaseSet("/q", "/c", "/h", false, false);
 	}
 	
 	@Test
-	public void test_acl_asta_escape_on__ignoreQuery_yes() throws UnknownHostException, AuthTokenException, IOException {
-		AuthToken ata = new AuthTokenBuilder()
-				.key(this.atEncryptionKey)
-				.windowSeconds(AuthTokenTest.DEFAULT_WINDOW_SECONDS)
+	public void test_acl_asta_escape_on__ignoreQuery_yes() throws UnknownHostException, EdgeAuthException, IOException {
+		EdgeAuth eaa = new EdgeAuthBuilder()
+				.key(this.eaEncryptionKey)
+				.windowSeconds(EdgeAuthTest.DEFAULT_WINDOW_SECONDS)
 				.build();
-		String token = ata.generateACLToken("/q_escape_ignore/*");
-		String qs = ata.getTokenName() + "=" + token;
-		String statusCode = AuthTokenTest.requests(this.atHostname, "/q_escape_ignore/hello", qs, null);
+		String token = eaa.generateACLToken("/q_escape_ignore/*");
+		String qs = eaa.getTokenName() + "=" + token;
+		String statusCode = EdgeAuthTest.requests(this.eaHostname, "/q_escape_ignore/hello", qs, null);
 		assertEquals("404", statusCode);
 	}
 	
 	@Test
-	public void test_acl_deli_escape_on__ignoreQuery_yes() throws UnknownHostException, AuthTokenException, IOException {
-		AuthToken atd = new AuthTokenBuilder()
-				.key(this.atEncryptionKey)
-				.windowSeconds(AuthTokenTest.DEFAULT_WINDOW_SECONDS)
+	public void test_acl_deli_escape_on__ignoreQuery_yes() throws UnknownHostException, EdgeAuthException, IOException {
+		EdgeAuth ead = new EdgeAuthBuilder()
+				.key(this.eaEncryptionKey)
+				.windowSeconds(EdgeAuthTest.DEFAULT_WINDOW_SECONDS)
 				.build();
 		String acl[] = { "/q_escape_ignore", "/q_escape_ignore/*" };
 
 		// For Java 8
-		// String token = atd.generateACLToken(String.join(AuthToken.ACL_DELIMITER, acl));
+		// String token = ead.generateACLToken(String.join(EdgeAuth.ACL_DELIMITER, acl));
 		
 		// For All
-		String token = atd.generateACLToken(AuthToken.join(AuthToken.ACL_DELIMITER, acl));
+		String token = ead.generateACLToken(EdgeAuth.join(EdgeAuth.ACL_DELIMITER, acl));
 		
-		String qs = atd.getTokenName() + "=" + token;
-		String statusCode = AuthTokenTest.requests(this.atHostname, "/q_escape_ignore", qs, null);
+		String qs = ead.getTokenName() + "=" + token;
+		String statusCode = EdgeAuthTest.requests(this.eaHostname, "/q_escape_ignore", qs, null);
 		assertEquals("404", statusCode);
 		
-		statusCode = AuthTokenTest.requests(this.atHostname, "/q_escape_ignore/world/", qs, null);
+		statusCode = EdgeAuthTest.requests(this.eaHostname, "/q_escape_ignore/world/", qs, null);
 		assertEquals("404", statusCode);
 	}
 	
 	@Test 
 	public void test_exceptions() {
 		try {
-			AuthToken att = new AuthTokenBuilder()
-					// .key(this.atEncryptionKey)
-					.windowSeconds(AuthTokenTest.DEFAULT_WINDOW_SECONDS)
+			EdgeAuth eat = new EdgeAuthBuilder()
+					// .key(this.eaEncryptionKey)
+					.windowSeconds(EdgeAuthTest.DEFAULT_WINDOW_SECONDS)
 					.build();
-		} catch(AuthTokenException ae) {
-			assertEquals(ae.getMessage(), "You must provide a secret in order to generate a new token.");
+		} catch(EdgeAuthException eae) {
+			assertEquals(eae.getMessage(), "You must provide a secret in order to generate a new token.");
 		}
 		try {
-			AuthToken att = new AuthTokenBuilder()
-					 .key(this.atEncryptionKey)
-					// .windowSeconds(AuthTokenTest.DEFAULT_WINDOW_SECONDS)
+			EdgeAuth eat = new EdgeAuthBuilder()
+					 .key(this.eaEncryptionKey)
+					// .windowSeconds(EdgeAuthTest.DEFAULT_WINDOW_SECONDS)
 					.build();
-		} catch(AuthTokenException ae) {
-			assertEquals(ae.getMessage(), "You must provide an expiration time or a duration window ( > 0 )");
+		} catch(EdgeAuthException eae) {
+			assertEquals(eae.getMessage(), "You must provide an expiration time or a duration window ( > 0 )");
 		}		
 	}
 }

@@ -17,13 +17,13 @@
 */
 
 
-package io.github.astinchoi.authtoken;
+package io.github.astinchoi.edgeauth;
 
 
 /**
- * To build an {@link AuthToken} instance.
+ * To build an {@link EdgeAuth} instance.
  */
-public class AuthTokenBuilder {
+public class EdgeAuthBuilder {
 
     /** select a preset. (Not Supported Yet) */
     private String tokenType = null;
@@ -69,138 +69,138 @@ public class AuthTokenBuilder {
 
     /**
      * @param tokenType tokenType
-     * @return AuthTokenBuilder
+     * @return EdgeAuthBuilder
      */
-    public AuthTokenBuilder tokenType(String tokenType) {
+    public EdgeAuthBuilder tokenType(String tokenType) {
         this.tokenType = tokenType;
         return this;
     }
 
     /**
      * @param tokenName tokenName
-     * @return AuthTokenBuilder
+     * @return EdgeAuthBuilder
      */
-    public AuthTokenBuilder tokenName(String tokenName) {
+    public EdgeAuthBuilder tokenName(String tokenName) {
         this.tokenName = tokenName;
         return this;
     }
 
     /**
      * @param key key
-     * @return AuthTokenBuilder
+     * @return EdgeAuthBuilder
      */
-    public AuthTokenBuilder key(String key) {
+    public EdgeAuthBuilder key(String key) {
         this.key = key;
         return this;
     }
 
     /**
      * @param algorithm algorithm
-     * @return AuthTokenBuilder
+     * @return EdgeAuthBuilder
      */
-    public AuthTokenBuilder algorithm(String algorithm) {
+    public EdgeAuthBuilder algorithm(String algorithm) {
         this.algorithm = algorithm;
         return this;
     }
 
     /**
      * @param salt salt
-     * @return AuthTokenBuilder
+     * @return EdgeAuthBuilder
      */
-    public AuthTokenBuilder salt(String salt) {
+    public EdgeAuthBuilder salt(String salt) {
         this.salt = salt;
         return this;
     }
 
     /**
      * @param ip ip
-     * @return AuthTokenBuilder
+     * @return EdgeAuthBuilder
      */
-    public AuthTokenBuilder ip(String ip) {
+    public EdgeAuthBuilder ip(String ip) {
         this.ip = ip;
         return this;
     }
 
     /**
      * @param payload payload
-     * @return AuthTokenBuilder
+     * @return EdgeAuthBuilder
      */
-    public AuthTokenBuilder payload(String payload) {
+    public EdgeAuthBuilder payload(String payload) {
         this.payload = payload;
         return this;
     }
 
     /**
      * @param sessionId sessionId
-     * @return AuthTokenBuilder
+     * @return EdgeAuthBuilder
      */
-    public AuthTokenBuilder sessionId(String sessionId) {
+    public EdgeAuthBuilder sessionId(String sessionId) {
         this.sessionId = sessionId;
         return this;
     }
 
     /**
      * @param startTime startTime
-     * @return AuthTokenBuilder
+     * @return EdgeAuthBuilder
      */
-    public AuthTokenBuilder startTime(long startTime) {
+    public EdgeAuthBuilder startTime(long startTime) {
         this.startTime = startTime;
         return this;
     }
 
     /**
      * @param endTime endTime
-     * @return AuthTokenBuilder
+     * @return EdgeAuthBuilder
      */
-    public AuthTokenBuilder endTime(long endTime) {
+    public EdgeAuthBuilder endTime(long endTime) {
         this.endTime = endTime;
         return this;
     }
 
     /**
      * @param windowSeconds windowSeconds
-     * @return AuthTokenBuilder
+     * @return EdgeAuthBuilder
      */
-    public AuthTokenBuilder windowSeconds(long windowSeconds) {
+    public EdgeAuthBuilder windowSeconds(long windowSeconds) {
         this.windowSeconds = windowSeconds;
         return this;
     }
 
     /**
      * @param fieldDelimiter fieldDelimiter
-     * @return AuthTokenBuilder
+     * @return EdgeAuthBuilder
      */
-    public AuthTokenBuilder fieldDelimiter(char fieldDelimiter) {
+    public EdgeAuthBuilder fieldDelimiter(char fieldDelimiter) {
         this.fieldDelimiter = fieldDelimiter;
         return this;
     }
     
     /**
      * @param escapeEarly escapeEarly
-     * @return AuthTokenBuilder
+     * @return EdgeAuthBuilder
      */
-    public AuthTokenBuilder escapeEarly(boolean escapeEarly) {
+    public EdgeAuthBuilder escapeEarly(boolean escapeEarly) {
         this.escapeEarly = escapeEarly;
         return this;
     }
 
     /**
      * @param verbose verbose
-     * @return AuthTokenBuilder
+     * @return EdgeAuthBuilder
      */
-    public AuthTokenBuilder verbose(boolean verbose) {
+    public EdgeAuthBuilder verbose(boolean verbose) {
         this.verbose = verbose;
         return this;
     }
 
     /**
-     * build an {@link AuthToken} instance
+     * build an {@link EdgeAuth} instance
      * 
-     * @return {@link AuthToken}
-     * @throws AuthTokenException AuthTokenException
+     * @return {@link EdgeAuth}
+     * @throws EdgeAuthException EdgeAuthException
      */
-    public AuthToken build() throws AuthTokenException {
-        return new AuthToken(
+    public EdgeAuth build() throws EdgeAuthException {
+        return new EdgeAuth(
             tokenType, tokenName,
             key, algorithm, salt,
             ip, payload, sessionId,

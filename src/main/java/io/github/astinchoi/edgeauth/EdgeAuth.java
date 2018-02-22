@@ -17,7 +17,7 @@
 */
 
 
-package io.github.astinchoi.authtoken;
+package io.github.astinchoi.edgeauth;
 
 import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
@@ -35,9 +35,9 @@ import javax.xml.bind.DatatypeConverter;
 
 /**
  * This is for returning authorization token string. You can build an instance 
- * using {@link AuthTokenBuilder} and this can throw {@link AuthTokenException}.
+ * using {@link EdgeAuthBuilder} and this can throw {@link EdgeAuthException}.
  */
-public class AuthToken {
+public class EdgeAuth {
     /** Current time when using startTime */
     public static final Long NOW = 0L;
 
@@ -86,7 +86,7 @@ public class AuthToken {
     /** print all parameters. */
     private boolean verbose;
 
-    public AuthToken(
+    public EdgeAuth(
         String tokenType,
         String tokenName,
         String key,
@@ -100,7 +100,7 @@ public class AuthToken {
         Long windowSeconds,
         char fieldDelimiter,
         boolean escapeEarly,
-        boolean verbose) throws AuthTokenException
+        boolean verbose) throws EdgeAuthException
     {
         this.setTokenType(tokenType);
         this.setTokenName(tokenName);
@@ -124,9 +124,9 @@ public class AuthToken {
      * @param delimiter {@code ACL_DELIMITER}
      * @param lists ACL(Access Control List) string array
      * @return joined string with delimiter
-     * @throws AuthTokenException AuthTokenException
+     * @throws EdgeAuthException EdgeAuthException
     */
-    public static String join(String delimiter, String[] lists) throws AuthTokenException {
+    public static String join(String delimiter, String[] lists) throws EdgeAuthException {
         try {
             StringBuilder sb = new StringBuilder();
             for (String list : lists) {
@@ -135,7 +135,7 @@ public class AuthToken {
             }
             return sb.toString();
         } catch(Exception e) {
-            throw new AuthTokenException(e.getMessage());
+            throw new EdgeAuthException(e.getMessage());
         }
     }
 
@@ -144,9 +144,9 @@ public class AuthToken {
      * 
      * @param text string
      * @return escaped string up to {@value escapeEarly}.
-     * @throws AuthTokenException AuthTokenException
+     * @throws EdgeAuthException EdgeAuthException
      */
-    private String escapeEarly(final String text) throws AuthTokenException {
+    private String escapeEarly(final String text) throws EdgeAuthException {
         if (this.escapeEarly == true) {
             try {
                 StringBuilder newText = new StringBuilder(URLEncoder.encode(text, "UTF-8"));
@@ -161,7 +161,7 @@ public class AuthToken {
             } catch (UnsupportedEncodingException e) {
                 return text;
             } catch (Exception e) {
-                throw new AuthTokenException(e.getMessage());
+                throw new EdgeAuthException(e.getMessage());
             }
         } else {
             return text;
@@ -175,13 +175,13 @@ public class AuthToken {
      * @param url or acl path
      * @param for url or acl to check
      * @return authorization token string
-     * @throws AuthTokenException AuthTokenException
+     * @throws EdgeAuthException EdgeAuthException
      */
-    private String generateToken(String path, boolean isUrl) throws AuthTokenException {
-        if (this.startTime == AuthToken.NOW) {
+    private String generateToken(String path, boolean isUrl) throws EdgeAuthException {
+        if (this.startTime == EdgeAuth.NOW) {
             this.startTime = Calendar.getInstance(TimeZone.getTimeZone("UTC")).getTimeInMillis() / 1000L;
         } else if(this.startTime != null && this.startTime < 0) {
-            throw new AuthTokenException("startTime must be ( > 0 )");
+            throw new EdgeAuthException("startTime must be ( > 0 )");
         }
 
         if (this.endTime == null) {
@@ -193,14 +193,14 @@ public class AuthToken {
                     this.endTime = this.startTime + this.windowSeconds;
                 }
             } else {
-                throw new AuthTokenException("You must provide an expiration time or a duration window ( > 0 )");
+                throw new EdgeAuthException("You must provide an expiration time or a duration window ( > 0 )");
             }
         } else if(this.endTime <= 0) {
-            throw new AuthTokenException("endTime must be ( > 0 )");
+            throw new EdgeAuthException("endTime must be ( > 0 )");
         }
 
         if (this.startTime != null && (this.endTime <= this.startTime)) {
-            throw new AuthTokenException("Token will have already expired.");
+            throw new EdgeAuthException("Token will have already expired.");
         }
 
         if (this.verbose) {
@@ -222,7 +222,7 @@ public class AuthToken {
             System.out.println("    Window(seconds) : " + this.windowSeconds);
             System.out.println("    End Time        : " + this.endTime);
             System.out.println("    Field Delimiter : " + this.fieldDelimiter);
-            System.out.println("    ACL Delimiter   : " + AuthToken.ACL_DELIMITER);
+            System.out.println("    ACL Delimiter   : " + EdgeAuth.ACL_DELIMITER);
             System.out.println("    Escape Early    : " + this.escapeEarly);
         }
 
@@ -283,9 +283,9 @@ public class AuthToken {
             return newToken.toString() + "hmac=" + 
                 String.format("%0" + (2*hmac.getMacLength()) +  "x", new BigInteger(1, hmacBytes));
         } catch (NoSuchAlgorithmException e) {
-            throw new AuthTokenException(e.toString());
+            throw new EdgeAuthException(e.toString());
         } catch (InvalidKeyException e) {
-            throw new AuthTokenException(e.toString());
+            throw new EdgeAuthException(e.toString());
         }
     }
 
@@ -294,11 +294,11 @@ public class AuthToken {
      * 
      * @param url a single path
      * @return authorization token string
-     * @throws AuthTokenException AuthTokenException
+     * @throws EdgeAuthException EdgeAuthException
      */
-    public String generateURLToken(String url) throws AuthTokenException {
+    public String generateURLToken(String url) throws EdgeAuthException {
         if (url == null || url == "") {
-            throw new AuthTokenException("You must provide a URL.");
+            throw new EdgeAuthException("You must provide a URL.");
         }
         return generateToken(url, true);
     }
@@ -308,11 +308,11 @@ public class AuthToken {
      * 
      * @param acl access control list
      * @return authorization token string
-     * @throws AuthTokenException AuthTokenException
+     * @throws EdgeAuthException EdgeAuthException
      */
-    public String generateACLToken(String acl) throws AuthTokenException {
+    public String generateACLToken(String acl) throws EdgeAuthException {
         if (acl == null || acl == "") {
-            throw new AuthTokenException("You must provide an ACL.");
+            throw new EdgeAuthException("You must provide an ACL.");
         }
         return generateToken(acl, false);
     }
@@ -326,31 +326,31 @@ public class AuthToken {
 
     /**
      * @param tokenName tokenName
-     * @throws AuthTokenException AuthTokenException
+     * @throws EdgeAuthException EdgeAuthException
      */
-    public void setTokenName(String tokenName) throws AuthTokenException {
+    public void setTokenName(String tokenName) throws EdgeAuthException {
         if (tokenName == null || tokenName == "") {
-            throw new AuthTokenException("You must provide a token name.");
+            throw new EdgeAuthException("You must provide a token name.");
         }
         this.tokenName = tokenName;
     }
 
     /**
      * @param key key
-     * @throws AuthTokenException AuthTokenException
+     * @throws EdgeAuthException EdgeAuthException
      */
-    public void setKey(String key) throws AuthTokenException {
+    public void setKey(String key) throws EdgeAuthException {
         if (key == null || key == "") {
-            throw new AuthTokenException("You must provide a secret in order to generate a new token.");
+            throw new EdgeAuthException("You must provide a secret in order to generate a new token.");
         }
         this.key = key;
     }
 
     /**
      * @param algorithm algorithm
-     * @throws AuthTokenException AuthTokenException
+     * @throws EdgeAuthException EdgeAuthException
      */
-    public void setAlgorithm(String algorithm) throws AuthTokenException {
+    public void setAlgorithm(String algorithm) throws EdgeAuthException {
         if (algorithm.equalsIgnoreCase("sha256"))
             this.algorithm = "HmacSHA256";
         else if (algorithm.equalsIgnoreCase("sha1"))
@@ -358,7 +358,7 @@ public class AuthToken {
         else if (algorithm.equalsIgnoreCase("md5"))
             this.algorithm = "HmacMD5";
         else
-            throw new AuthTokenException("Unknown Algorithm");
+            throw new EdgeAuthException("Unknown Algorithm");
     }
 
     /**

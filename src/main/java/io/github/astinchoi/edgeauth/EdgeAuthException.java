@@ -17,19 +17,19 @@
 */
 
 
-package io.github.astinchoi.authtoken;
+package io.github.astinchoi.edgeauth;
 
 
 /**
- * {@link AuthToken} exception class
+ * {@link EdgeAuth} exception class
  */
-public class AuthTokenException extends Exception {
+public class EdgeAuthException extends Exception {
     private static final long serialVersionUID = 1L;
 
     /**
      * @param msg exception message
      */
-    public AuthTokenException(String msg) {
+    public EdgeAuthException(String msg) {
         super(msg);
     }
 }

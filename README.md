@@ -1,30 +1,30 @@
-# Akamai-AuthToken: Akamai Authorization Token for Java
+# Akamai-EdgeAuth: Akamai Edge Authorization Token for Java
 
-[![Maven Central](https://img.shields.io/badge/maven%20central-0.2.7-brightgreen.svg)](http://search.maven.org/#artifactdetails%7Cio.github.astinchoi%7CAkamai-AuthToken-Java%7C0.2.7%7C)
-[![Build Status](https://travis-ci.org/AstinCHOI/Akamai-AuthToken-Java.svg?branch=master)](https://travis-ci.org/AstinCHOI/Akamai-AuthToken-Java)
-[![License](http://img.shields.io/:license-apache-blue.svg)](https://github.com/AstinCHOI/Akamai-AuthToken-Java/blob/master/LICENSE)
+[![Maven Central](https://img.shields.io/badge/maven%20central-0.2.7-brightgreen.svg)](http://search.maven.org/#artifactdetails%7Cio.github.astinchoi%7CAkamai-EdgeAuth-Java%7C0.2.7%7C)
+[![Build Status](https://travis-ci.org/AstinCHOI/Akamai-EdgeAuth-Java.svg?branch=master)](https://travis-ci.org/AstinCHOI/Akamai-EdgeAuth-Java)
+[![License](http://img.shields.io/:license-apache-blue.svg)](https://github.com/AstinCHOI/Akamai-EdgeAuth-Java/blob/master/LICENSE)
 
-Akamai-AuthToken is Akamai Authorization Token in the HTTP Cookie, Query String and Header for a client.
+Akamai-EdgeAuth is Akamai Edge Authorization Token in the HTTP Cookie, Query String and Header for a client.
 You can configure it in the Property Manager at https://control.akamai.com.
 It's a behavior which is Auth Token 2.0 Verification.
 
-Akamai-AuthToken supports Java 1.6+. (This is Akamai unofficial code)
+Akamai-EdgeAuth supports Java 1.6+. (This is Akamai unofficial code)
 
-<div style="text-align:center"><img src=https://github.com/AstinCHOI/akamai-asset/blob/master/authtoken/authtoken.png?raw=true /></div>
+<div style="text-align:center"><img src=https://github.com/AstinCHOI/akamai-asset/blob/master/edgeauth/edgeauth.png?raw=true /></div>
 
 
 ## Build
-[Click Here](http://search.maven.org/#artifactdetails%7Cio.github.astinchoi%7CAkamai-AuthToken-Java%7C0.2.7%7C)
+[Click Here](http://search.maven.org/#artifactdetails%7Cio.github.astinchoi%7CAkamai-EdgeAuth-Java%7C0.2.7%7C)
 
 
 ## Example
 ```java
-import io.github.astinchoi.authtoken.AuthToken;
-import io.github.astinchoi.authtoken.AuthTokenBuilder;
-import io.github.astinchoi.authtoken.AuthTokenException;
+import io.github.astinchoi.edgeauth.EdgeAuth;
+import io.github.astinchoi.edgeauth.EdgeAuthBuilder;
+import io.github.astinchoi.edgeauth.EdgeAuthException;
 
 
-public class AuthTokenExample {
+public class EdgeAuthExample {
   public static void main(String[] args) {
     String hostname = "YourAkamaizedHostname";
     String encrpytionKey = "YourEncryptionKey";
@@ -38,7 +38,7 @@ public class AuthTokenExample {
 #### URL parameter option
 ```java
 try {
-  AuthToken at = new AuthTokenBuilder()
+  EdgeAuth ea = new EdgeAuthBuilder()
       .key(encrpytionKey)
       .windowSeconds(duration)
       .escapeEarly(true)
@@ -47,21 +47,21 @@ try {
   /******** 
   1) Cookie 
   *********/
-  String path = "/akamai/authtoken";
-  String token = at.generateURLToken(path);
+  String path = "/akamai/edgeauth";
+  String token = ea.generateURLToken(path);
   String url = String.format("http(s)://%s%s", hostname, path);
-  String cookie = String.format("%s=%s", at.getTokenName(), token);
+  String cookie = String.format("%s=%s", ea.getTokenName(), token);
   // => Link or Request "url" /w "cookie"
 
   /************** 
   2) Query String 
   ***************/
-  String path = "/akamai/authtoken";
-  String token = at.generateURLToken(path);
+  String path = "/akamai/edgeauth";
+  String token = ea.generateURLToken(path);
   String url = String.format("http(s)://%s%s?%s=%s", hostname, path,
-    at.getTokenName(), token);
+    ea.getTokenName(), token);
   // => Link or Request "url" /w Query string
-} catch (AuthTokenException e) {
+} catch (EdgeAuthException e) {
   e.printStackTrace();
 }
 ```
@@ -80,7 +80,7 @@ try {
 #### ACL(Access Control List) parameter option
 ```java
 try {
-  AuthToken at = new AuthTokenBuilder()
+  EdgeAuth ea = new EdgeAuthBuilder()
       .key(encrpytionKey)
       .windowSeconds(duration)
       .build();
@@ -88,21 +88,21 @@ try {
   /******************
   3) Header using '*' 
   *******************/
-  String acl = "/akamai/authtoken/list/*"; //*/
-  String token = at.generateACLToken(acl);
-  String url = String.format("http(s)://%s%s", hostname, "/akamai/authtoken/list/something");
-  String header = String.format("%s: %s", at.getTokenName(), token);
+  String acl = "/akamai/edgeauth/list/*"; //*/
+  String token = ea.generateACLToken(acl);
+  String url = String.format("http(s)://%s%s", hostname, "/akamai/edgeauth/list/something");
+  String header = String.format("%s: %s", ea.getTokenName(), token);
   // => Link or Request "url" /w "header"
 
   /************************* 
   4) Cookie Delimited by '!'
   **************************/
-  String acl2[] = { "/akamai/authtoken", "/akamai/authtoken/list/*" };
-  String token = at.generateACLToken(AuthToken.join(AuthToken.ACL_DELIMITER, acl2));
-  String url = String.format("http(s)://%s%s", hostname, "/akamai/authtoken/list/something2");
-  String cookie = String.format("%s=%s", at.getTokenName(), token);
+  String acl2[] = { "/akamai/edgeauth", "/akamai/edgeauth/list/*" };
+  String token = ea.generateACLToken(EdgeAuth.join(EdgeAuth.ACL_DELIMITER, acl2));
+  String url = String.format("http(s)://%s%s", hostname, "/akamai/edgeauth/list/something2");
+  String cookie = String.format("%s=%s", ea.getTokenName(), token);
   // => Link or Request "url" /w "cookie"
-} catch (AuthTokenException e) {
+} catch (EdgeAuthException e) {
   e.printStackTrace();
 }
 ```
@@ -115,7 +115,7 @@ try {
 
 ## Usage
 
-#### AuthToken, AuthTokenBuilder Class
+#### EdgeAuth, EdgeAuthBuilder Class
 | Parameter | Description |
 |-----------|-------------|
 | tokenType | Select a preset. (Not Supported Yet) |
@@ -126,21 +126,21 @@ try {
 | ip | IP Address to restrict this token to. (Troublesome in many cases (roaming, NAT, etc) so not often used) |
 | payload | Additional text added to the calculated digest. |
 | sessionId | The session identifier for single use tokens or other advanced cases. |
-| starTime | What is the start time? (Use 'AuthToken.NOW' for the current time) |
+| starTime | What is the start time? (Use 'EdgeAuth.NOW' for the current time) |
 | endTime | When does this token expire? 'endTime' overrides 'windowSeconds' |
 | windowSeconds | How long is this token valid for? |
 | fieldDelimiter | Character used to delimit token body fields. [ Default: ~ ] |
 | escapeEarly | Causes strings to be 'url' encoded before being used. |
 | verbose | Print all parameters. |
 
-#### AuthToken Static Variable
+#### EdgeAuth Static Variable
 ```java
 public static final Long NOW = 0L; // When using startTime
 public static String ACL_DELIMITER = "!"; // When using ACL
 ```
 
 
-#### AuthToken's Method
+#### EdgeAuth's Method
 | Method | Description |
 |--------|-------------|
 | generateURLToken(String url) | Single URL path. |
