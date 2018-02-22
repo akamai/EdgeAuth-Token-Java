@@ -31,18 +31,18 @@ public class EdgeAuthTest {
 	public void setUp() throws EdgeAuthException {
 		Map<String, String> env = System.getenv();
 		if (env.get("TEST_MODE") != null && env.get("TEST_MODE").equalsIgnoreCase("travis")) {
-			this.eaHostname = env.get("ET_HOSTNAME");
-			this.eaEncryptionKey = env.get("ET_ENCRYPTION_KEY");
-			this.eaTransitionKey = env.get("ET_TRANSITION_KEY");
-			this.eaSalt = env.get("ET_SALT_KEY");
+			this.eaHostname = env.get("EA_HOSTNAME");
+			this.eaEncryptionKey = env.get("EA_ENCRYPTION_KEY");
+			this.eaTransitionKey = env.get("EA_TRANSITION_KEY");
+			this.eaSalt = env.get("EA_SALT_KEY");
 		} else {
 			try {
 				Class<?> Secret = Class.forName("io.github.astinchoi.edgeauth.Secret");
 				
-				this.eaHostname = Secret.getField("ET_HOSTNAME").get("ET_HOSTNAME").toString();
-				this.eaEncryptionKey = Secret.getField("ET_ENCRYPTION_KEY").get("ET_ENCRYPTION_KEY").toString();
-				this.eaTransitionKey = Secret.getField("ET_TRANSITION_KEY").get("ET_TRANSITION_KEY").toString();
-				this.eaSalt = Secret.getField("ET_SALT_KEY").get("ET_SALT_KEY").toString();
+				this.eaHostname = Secret.getField("EA_HOSTNAME").get("EA_HOSTNAME").toString();
+				this.eaEncryptionKey = Secret.getField("EA_ENCRYPTION_KEY").get("EA_ENCRYPTION_KEY").toString();
+				this.eaTransitionKey = Secret.getField("EA_TRANSITION_KEY").get("EA_TRANSITION_KEY").toString();
+				this.eaSalt = Secret.getField("EA_SALT_KEY").get("EA_SALT_KEY").toString();
 			} catch (Exception e) {
 				e.printStackTrace();
 			}

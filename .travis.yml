@@ -2,8 +2,8 @@ language: java
 
 jdk:
   - oraclejdk8
-  - oraclejdk7
-  - openjdk6
+  - oraclejdk9
+  - openjdk7
 
 install: true
 
@@ -18,8 +18,8 @@ cache:
 
 script:
   - export TEST_MODE=TRAVIS
-  - export ET_HOSTNAME=$AT_HOSTNAME
-  - export ET_ENCRYPTION_KEY=$AT_ENCRYPTION_KEY
-  - export ET_TRANSITION_KEY=$AT_TRANSITION_KEY
-  - export ET_SALT=$AT_SALT
+  - export EA_HOSTNAME=$AT_HOSTNAME
+  - export EA_ENCRYPTION_KEY=$AT_ENCRYPTION_KEY
+  - export EA_TRANSITION_KEY=$AT_TRANSITION_KEY
+  - export EA_SALT=$AT_SALT
   - gradle test --info
