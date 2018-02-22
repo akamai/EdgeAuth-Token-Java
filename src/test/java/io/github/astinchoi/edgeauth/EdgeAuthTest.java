@@ -258,20 +258,21 @@ public class EdgeAuthTest {
 		this.cookieAssertEqual(cookiePath + queryString, "404", false, false, null, null, true);
 		this.headerAssertEqual(headerPath + queryString, "404", false, false, null, null, true);
 	}
-	
-	@Test
-	public void test_url_query_escape_on__ignore_yes_with_salt() throws UnknownHostException, EdgeAuthException, IOException {
-		String querySaltPath = "/salt";
-		EdgeAuth eas = new EdgeAuthBuilder()
-				.key(this.eaEncryptionKey)
-				.salt(this.eaSalt)
-				.windowSeconds(EdgeAuthTest.DEFAULT_WINDOW_SECONDS)
-				.escapeEarly(true)
-				.build();
-		String token = eas.generateURLToken(querySaltPath);
-		String qs = eas.getTokenName() + "=" + token;
-		String statusCode = EdgeAuthTest.requests(this.eaHostname, querySaltPath, qs, null);
-		assertEquals("404", statusCode);
+
+	// Doesn't support for the salt	
+	// @Test
+	// public void test_url_query_escape_on__ignore_yes_with_salt() throws UnknownHostException, EdgeAuthException, IOException {
+	// 	String querySaltPath = "/salt";
+	// 	EdgeAuth eas = new EdgeAuthBuilder()
+	// 			.key(this.eaEncryptionKey)
+	// 			.salt(this.eaSalt)
+	// 			.windowSeconds(EdgeAuthTest.DEFAULT_WINDOW_SECONDS)
+	// 			.escapeEarly(true)
+	// 			.build();
+	// 	String token = eas.generateURLToken(querySaltPath);
+	// 	String qs = eas.getTokenName() + "=" + token;
+	// 	String statusCode = EdgeAuthTest.requests(this.eaHostname, querySaltPath, qs, null);
+	// 	assertEquals("404", statusCode);
 	}
 	
 	/**********
