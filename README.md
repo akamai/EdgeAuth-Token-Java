@@ -1,6 +1,6 @@
 # Akamai-EdgeAuth: Akamai Edge Authorization Token for Java
 
-[![Maven Central](https://img.shields.io/badge/maven%20central-0.2.7-brightgreen.svg)](http://search.maven.org/#artifactdetails%7Cio.github.astinchoi%7CAkamai-EdgeAuth-Java%7C0.2.7%7C)
+[![Maven Central](https://img.shields.io/badge/maven%20central-0.1.0-brightgreen.svg)](http://search.maven.org/#artifactdetails%7Cio.github.astinchoi%7CAkamai-EdgeAuth-Java%7C0.1.0%7C)
 [![Build Status](https://travis-ci.org/AstinCHOI/Akamai-EdgeAuth-Java.svg?branch=master)](https://travis-ci.org/AstinCHOI/Akamai-EdgeAuth-Java)
 [![License](http://img.shields.io/:license-apache-blue.svg)](https://github.com/AstinCHOI/Akamai-EdgeAuth-Java/blob/master/LICENSE)
 
