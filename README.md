@@ -70,9 +70,9 @@ try {
 }
 ```
 
-* 'Escape token input' option in the Property Manager corresponds to 'escape_early' in the code.
-    | Escape token input (on) == escape_early (True)
-    | Escape token input (off) == escape_early (False)
+* 'Escape token input' option in the Property Manager corresponds to 'escapeEarly' in the code.  
+    Escape token input (on) == escapeEarly (true)  
+    Escape token input (off) == escapeEarly (false)
 * In [Example 2] for Query String, it's only okay for 'Ignore query string' option (on).
 * If you want to 'Ignore query string' option (off) using query string as your token, Please contact your Akamai representative.
 
@@ -109,7 +109,7 @@ try {
 
 * ACL can use the wildcard(\*, ?) in the path.
 * Don't use '!' in your path because it's ACL Delimiter.
-* Use 'escape_early=False' as default setting but it doesn't matter turning on/off 'Escape token input' option in the Property Manager
+* Use 'escapeEarly=false' as default setting but it doesn't matter turning on/off 'Escape token input' option in the Property Manager
 
 
 ## Usage
@@ -154,7 +154,7 @@ Returns the authorization token string.
 
 
 ## Others
-If you use the **Segmented Media Protection** behavior in AMD(Adaptive Media Delivery) Product, **tokenName(options.tokenName)** should be '**hdnts**'.
+If you use the **Segmented Media Protection** behavior in AMD(Adaptive Media Delivery) Product, **tokenName** should be '**hdnts**'.
 
 <div style="text-align:center"><img src=https://github.com/AstinCHOI/akamai-asset/blob/master/edgeauth/segmented_media_protection.png?raw=true/></div>
 

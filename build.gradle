@@ -5,8 +5,6 @@ plugins {
 group 'com.akamai'
 version '0.3.0'
 
-sourceCompatibility = 1.8
-
 repositories {
     mavenCentral()
 }
