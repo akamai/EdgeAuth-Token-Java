@@ -1,9 +1,16 @@
-apply plugin:'java'
-
-repositories { 
-  jcenter() 
+plugins {
+    id 'java'
 }
 
-dependencies { 
-  testCompile 'junit:junit:4.12' 
+group 'com.akamai'
+version '0.3.0'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.12'
 }

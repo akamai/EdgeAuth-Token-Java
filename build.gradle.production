@@ -5,7 +5,7 @@ plugins {
   id 'signing'
 }
 
-group = "io.github.astinchoi"
+group = "com.akamai"
 version = "0.1.0"
 
 repositories {
@@ -57,15 +57,17 @@ uploadArchives {
       }
 
       pom.project {
-        name 'Akamai-EdgeAuth-Java'
+        name 'EdgeAuth-Token-Java'
+        groupId 'com.akamai'
+        artifactId 'edgeauth'
         packaging 'jar'
         description 'Akamai Edge Authorization Token for Java'
-        url 'https://github.com/AstinCHOI/Akamai-EdgeAuth-Java'
+        url 'https://github.com/akamai/EdgeAuth-Token-Java'
 
         scm {
-          connection 'scm:git@github.com:AstinCHOI/Akamai-EdgeAuth-Java.git'
-          developerConnection 'scm:git@github.com:AstinCHOI/Akamai-EdgeAuth-Java.git'
-          url 'scm:git@github.com:AstinCHOI/Akamai-EdgeAuth-Java.git'
+          connection 'scm:git@github.com:akamai/EdgeAuth-Token-Java.git'
+          developerConnection 'scm:git@github.com:akamai/EdgeAuth-Token-Java.git'
+          url 'scm:git@github.com:akamai/EdgeAuth-Token-Java.git'
         }
 
         licenses {
@@ -87,18 +89,18 @@ uploadArchives {
 }
 
 nexusStaging {
-    packageGroup = "io.github.astinchoi"
+    packageGroup = "com.akamai"
 }
 
 pluginBundle {
-  website = 'https://github.com/AstinCHOI/Akamai-EdgeAuth-Java'
-  vcsUrl = 'https://github.com/AstinCHOI/Akamai-EdgeAuth-Java'
+  website = 'https://github.com/akamai/EdgeAuth-Token-Java'
+  vcsUrl = 'https://github.com/akamai/EdgeAuth-Token-Java'
   description = 'Akamai Authorization Token for Java'
   tags = ['akamai', 'akamai-open', 'authorization', 'token', 'edgeauth', 'signed-url', 'java']
 
   plugins {
     edgeauthPlugin {
-      id = 'io.github.astinchoi.edgeauth'
+      id = 'com.akamai.edgeauth'
       displayName = 'Akamai Edge Authorization Token for Java'
     }
   }

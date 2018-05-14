@@ -1,23 +1,23 @@
 /*
-* Author: Astin Choi <achoi@akamai.com>
+ * Author: Astin Choi <achoi@akamai.com>
 
-* Copyright 2017 Akamai Technologies http://developer.akamai.com.
+ * Copyright 2017 Akamai Technologies http://developer.akamai.com.
 
-* Licensed under the Apache License, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
 
-*     http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
 
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*/
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 
-package io.github.astinchoi.edgeauth;
+package com.akamai.edgeauth;
 
 
 /**
@@ -60,6 +60,9 @@ public class EdgeAuthBuilder {
 
     /** character used to delimit token body fields. */
     private char fieldDelimiter = '~';
+
+    /** Character used to delimit acl. */
+    private char aclDelimiter = '!';
 
     /** causes strings to be url encoded before being used. */
     private boolean escapeEarly = false;
@@ -149,7 +152,7 @@ public class EdgeAuthBuilder {
     }
 
     /**
-     * @param endTime endTime
+     * @param endTime End Time
      * @return EdgeAuthBuilder
      */
     public EdgeAuthBuilder endTime(long endTime) {
@@ -158,7 +161,7 @@ public class EdgeAuthBuilder {
     }
 
     /**
-     * @param windowSeconds windowSeconds
+     * @param windowSeconds Window Seconds
      * @return EdgeAuthBuilder
      */
     public EdgeAuthBuilder windowSeconds(long windowSeconds) {
@@ -167,16 +170,25 @@ public class EdgeAuthBuilder {
     }
 
     /**
-     * @param fieldDelimiter fieldDelimiter
+     * @param fieldDelimiter Field Delimiter
      * @return EdgeAuthBuilder
      */
     public EdgeAuthBuilder fieldDelimiter(char fieldDelimiter) {
         this.fieldDelimiter = fieldDelimiter;
         return this;
     }
-    
+
     /**
-     * @param escapeEarly escapeEarly
+     * @param aclDelimiter ACL Delimiter
+     * @return EdgeAuthBuilder
+     */
+    public EdgeAuthBuilder aclDelimiter(char aclDelimiter) {
+        this.aclDelimiter = aclDelimiter;
+        return this;
+    }
+
+    /**
+     * @param escapeEarly Escape Early
      * @return EdgeAuthBuilder
      */
     public EdgeAuthBuilder escapeEarly(boolean escapeEarly) {
@@ -195,17 +207,17 @@ public class EdgeAuthBuilder {
 
     /**
      * build an {@link EdgeAuth} instance
-     * 
+     *
      * @return {@link EdgeAuth}
      * @throws EdgeAuthException EdgeAuthException
      */
     public EdgeAuth build() throws EdgeAuthException {
         return new EdgeAuth(
-            tokenType, tokenName,
-            key, algorithm, salt,
-            ip, payload, sessionId,
-            startTime, endTime, windowSeconds,
-            fieldDelimiter, escapeEarly, verbose
+                tokenType, tokenName,
+                key, algorithm, salt,
+                ip, payload, sessionId,
+                startTime, endTime, windowSeconds,
+                fieldDelimiter, aclDelimiter, escapeEarly, verbose
         );
     }
 }

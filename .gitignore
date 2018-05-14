@@ -20,6 +20,7 @@ bin/
 # Others
 .DS_Store
 .vscode
+.idea
 .classpath
 .settings
 .project

@@ -1,23 +1,23 @@
 /*
-* Author: Astin Choi <achoi@akamai.com>
+ * Author: Astin Choi <achoi@akamai.com>
 
-* Copyright 2017 Akamai Technologies http://developer.akamai.com.
+ * Copyright 2017 Akamai Technologies http://developer.akamai.com.
 
-* Licensed under the Apache License, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
 
-*     http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
 
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*/
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 
-package io.github.astinchoi.edgeauth;
+package com.akamai.edgeauth;
 
 import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
@@ -41,9 +41,6 @@ public class EdgeAuth {
     /** Current time when using startTime */
     public static final Long NOW = 0L;
 
-    /** ! delimiter when using ACL */
-    public static String ACL_DELIMITER = "!";
-    
     /** select a preset. (Not Supported Yet) */
     private String tokenType;
 
@@ -64,7 +61,7 @@ public class EdgeAuth {
 
     /** additional text added to the calculated digest. */
     private String payload;
-    
+
     /** the session identifier for single use tokens or other advanced cases. */
     private String sessionId;
 
@@ -80,6 +77,9 @@ public class EdgeAuth {
     /** character used to delimit token body fields. */
     private char fieldDelimiter;
 
+    /** Character used to delimit acl. */
+    private char aclDelimiter;
+
     /** causes strings to be url encoded before being used. */
     private boolean escapeEarly;
 
@@ -87,20 +87,21 @@ public class EdgeAuth {
     private boolean verbose;
 
     public EdgeAuth(
-        String tokenType,
-        String tokenName,
-        String key,
-        String algorithm,
-        String salt,
-        String ip, 
-        String payload,
-        String sessionId,
-        Long startTime,
-        Long endTime,
-        Long windowSeconds,
-        char fieldDelimiter,
-        boolean escapeEarly,
-        boolean verbose) throws EdgeAuthException
+            String tokenType,
+            String tokenName,
+            String key,
+            String algorithm,
+            String salt,
+            String ip,
+            String payload,
+            String sessionId,
+            Long startTime,
+            Long endTime,
+            Long windowSeconds,
+            char fieldDelimiter,
+            char aclDelimiter,
+            boolean escapeEarly,
+            boolean verbose) throws EdgeAuthException
     {
         this.setTokenType(tokenType);
         this.setTokenName(tokenName);
@@ -114,19 +115,20 @@ public class EdgeAuth {
         this.setEndTime(endTime);
         this.setWindowSeconds(windowSeconds);
         this.setFieldDelimiter(fieldDelimiter);
+        this.setAclDelimiter(aclDelimiter);
         this.setEscapeEarly(escapeEarly);
         this.setVerbose(verbose);
     }
 
-    /** 
+    /**
      * Makes a string array to joined a string with delimiter.
-     * 
+     *
      * @param delimiter {@code ACL_DELIMITER}
      * @param lists ACL(Access Control List) string array
      * @return joined string with delimiter
      * @throws EdgeAuthException EdgeAuthException
-    */
-    public static String join(String delimiter, String[] lists) throws EdgeAuthException {
+     */
+    public static String join(char delimiter, String[] lists) throws EdgeAuthException {
         try {
             StringBuilder sb = new StringBuilder();
             for (String list : lists) {
@@ -141,7 +143,7 @@ public class EdgeAuth {
 
     /**
      * Causes strings to be 'url' encoded before being used.
-     * 
+     *
      * @param text string
      * @return escaped string up to {@value escapeEarly}.
      * @throws EdgeAuthException EdgeAuthException
@@ -171,9 +173,9 @@ public class EdgeAuth {
     /**
      * Generate authorization token called by
      * {@code generateURLToken} and {@code generateACLToken}
-     * 
-     * @param url or acl path
-     * @param for url or acl to check
+     *
+     * @param path acl or acl path
+     * @param isUrl is Url?
      * @return authorization token string
      * @throws EdgeAuthException EdgeAuthException
      */
@@ -188,7 +190,7 @@ public class EdgeAuth {
             if (this.windowSeconds != null && this.windowSeconds > 0) {
                 if (this.startTime == null) {
                     this.endTime = (Calendar.getInstance(TimeZone.getTimeZone("UTC")).getTimeInMillis() / 1000L) +
-                        this.windowSeconds;
+                            this.windowSeconds;
                 } else {
                     this.endTime = this.startTime + this.windowSeconds;
                 }
@@ -222,7 +224,7 @@ public class EdgeAuth {
             System.out.println("    Window(seconds) : " + this.windowSeconds);
             System.out.println("    End Time        : " + this.endTime);
             System.out.println("    Field Delimiter : " + this.fieldDelimiter);
-            System.out.println("    ACL Delimiter   : " + EdgeAuth.ACL_DELIMITER);
+            System.out.println("    ACL Delimiter   : " + this.aclDelimiter);
             System.out.println("    Escape Early    : " + this.escapeEarly);
         }
 
@@ -240,7 +242,7 @@ public class EdgeAuth {
         newToken.append("exp=");
         newToken.append(Long.toString(this.endTime));
         newToken.append(this.fieldDelimiter);
-        
+
         if (!isUrl) {
             newToken.append("acl=");
             newToken.append(escapeEarly(path));
@@ -267,12 +269,12 @@ public class EdgeAuth {
         }
 
         if (this.salt != null) {
-        	hashSource.append("salt=");
+            hashSource.append("salt=");
             hashSource.append(this.salt);
             hashSource.append(this.fieldDelimiter);
         }
         hashSource.deleteCharAt(hashSource.length() - 1);
-        
+
         try {
             Mac hmac = Mac.getInstance(this.algorithm);
             byte[] keyBytes = DatatypeConverter.parseHexBinary(this.key);
@@ -280,8 +282,8 @@ public class EdgeAuth {
             hmac.init(secretKey);
 
             byte[] hmacBytes = hmac.doFinal(hashSource.toString().getBytes());
-            return newToken.toString() + "hmac=" + 
-                String.format("%0" + (2*hmac.getMacLength()) +  "x", new BigInteger(1, hmacBytes));
+            return newToken.toString() + "hmac=" +
+                    String.format("%0" + (2*hmac.getMacLength()) +  "x", new BigInteger(1, hmacBytes));
         } catch (NoSuchAlgorithmException e) {
             throw new EdgeAuthException(e.toString());
         } catch (InvalidKeyException e) {
@@ -291,7 +293,7 @@ public class EdgeAuth {
 
     /**
      * Call {@code generateToken}
-     * 
+     *
      * @param url a single path
      * @return authorization token string
      * @throws EdgeAuthException EdgeAuthException
@@ -305,8 +307,8 @@ public class EdgeAuth {
 
     /**
      * Call {@code generateToken}
-     * 
-     * @param acl access control list
+     *
+     * @param acl access control list (String)
      * @return authorization token string
      * @throws EdgeAuthException EdgeAuthException
      */
@@ -315,6 +317,22 @@ public class EdgeAuth {
             throw new EdgeAuthException("You must provide an ACL.");
         }
         return generateToken(acl, false);
+    }
+
+    /**
+     * Call {@code generateToken}
+     *
+     * @param acl access control list (String[])
+     * @return authorization token string
+     * @throws EdgeAuthException EdgeAuthException
+     */
+    public String generateACLToken(String[] acl) throws EdgeAuthException {
+        if (acl == null || acl.length == 0) {
+            throw new EdgeAuthException("You must provide an ACL.");
+        }
+
+        String newAcl = join(this.getAclDelimiter(), acl);
+        return generateToken(newAcl, false);
     }
 
     /**
@@ -411,6 +429,13 @@ public class EdgeAuth {
     }
 
     /**
+     * @param aclDelimiter aclDelimiter
+     */
+    public void setAclDelimiter(char aclDelimiter) {
+        this.aclDelimiter = aclDelimiter;
+    }
+
+    /**
      * @param fieldDelimiter fieldDelimiter
      */
     public void setFieldDelimiter(char fieldDelimiter) {
@@ -419,7 +444,7 @@ public class EdgeAuth {
 
     /**
      * @param escapeEarly escapeEarly
-     */    
+     */
     public void setEscapeEarly(boolean escapeEarly) {
         this.escapeEarly = escapeEarly;
     }
@@ -429,7 +454,7 @@ public class EdgeAuth {
     public void setVerbose(boolean verbose) {
         this.verbose = verbose;
     }
-    
+
     /**
      * @return tokenType
      */
@@ -511,6 +536,13 @@ public class EdgeAuth {
      */
     public char getFieldDelimiter() {
         return this.fieldDelimiter;
+    }
+
+    /**
+     * @return aclDelimiter
+     */
+    public char getAclDelimiter() {
+        return this.aclDelimiter;
     }
 
     /**
