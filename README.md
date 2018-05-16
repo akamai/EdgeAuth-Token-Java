@@ -14,7 +14,7 @@ EdgeAuth-Token-Java supports Java 1.6+.
 
 
 ## Build
-[Click Here](http://search.maven.org/#artifactdetails%7Ccom.akamai%7Cedgeauth%7C0.1.0%7C)
+[Click Here](http://search.maven.org/#artifactdetails%7Ccom.akamai%7Cedgeauth%7C0.2.0%7C)
 
 
 ## Example
@@ -115,29 +115,29 @@ try {
 ## Usage
 
 #### EdgeAuth, EdgeAuthBuilder Class
+
 | Parameter | Description |
 |-----------|-------------|
 | tokenType | Select a preset. (Not Supported Yet) |
 | tokenName | Parameter name for the new token. [ Default: \_\_token\_\_ ] |
 | key | Secret required to generate the token. It must be hexadecimal digit string with even-length. |
-| algorithm  | Algorithm to use to generate the token. (sha1, sha256, or md5) [ Default:sha256 ] |
+| algorithm  | Algorithm to use to generate the token. ("sha1", "sha256", or "md5") [ Default: "sha256" ] |
 | salt | Additional data validated by the token but NOT included in the token body. (It will be deprecated) |
 | ip | IP Address to restrict this token to. (Troublesome in many cases (roaming, NAT, etc) so not often used) |
 | payload | Additional text added to the calculated digest. |
 | sessionId | The session identifier for single use tokens or other advanced cases. |
-| starTime | What is the start time? (Use 'EdgeAuth.NOW' for the current time) |
-| endTime | When does this token expire? 'endTime' overrides 'windowSeconds' |
+| startTime | What is the start time? (Use EdgeAuth.NOW for the current time) |
+| endTime | When does this token expire? endTime overrides windowSeconds |
 | windowSeconds | How long is this token valid for? |
 | fieldDelimiter | Character used to delimit token body fields. [ Default: ~ ] |
 | aclDelimiter | Character used to delimit acl. [ Default: ! ] |
-| escapeEarly | Causes strings to be 'url' encoded before being used. |
+| escapeEarly | Causes strings to be url encoded before being used. |
 | verbose | Print all parameters. |
 
 #### EdgeAuth Static Variable
 ```java
 public static final Long NOW = 0L; // When using startTime, 0L means "from NOW".
 ```
-
 
 #### EdgeAuth's Method
 | Method | Description |

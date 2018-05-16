@@ -180,28 +180,31 @@ public class EdgeAuth {
      * @throws EdgeAuthException EdgeAuthException
      */
     private String generateToken(String path, boolean isUrl) throws EdgeAuthException {
-        if (this.startTime == EdgeAuth.NOW) {
-            this.startTime = Calendar.getInstance(TimeZone.getTimeZone("UTC")).getTimeInMillis() / 1000L;
-        } else if(this.startTime != null && this.startTime < 0) {
+        Long startTime = this.startTime;
+        Long endTime = this.endTime;
+
+        if (startTime == EdgeAuth.NOW) {
+            startTime = Calendar.getInstance(TimeZone.getTimeZone("UTC")).getTimeInMillis() / 1000L;
+        } else if(startTime != null && startTime < 0) {
             throw new EdgeAuthException("startTime must be ( > 0 )");
         }
 
-        if (this.endTime == null) {
+        if (endTime == null) {
             if (this.windowSeconds != null && this.windowSeconds > 0) {
-                if (this.startTime == null) {
-                    this.endTime = (Calendar.getInstance(TimeZone.getTimeZone("UTC")).getTimeInMillis() / 1000L) +
+                if (startTime == null) {
+                    endTime = (Calendar.getInstance(TimeZone.getTimeZone("UTC")).getTimeInMillis() / 1000L) +
                             this.windowSeconds;
                 } else {
-                    this.endTime = this.startTime + this.windowSeconds;
+                    endTime = startTime + this.windowSeconds;
                 }
             } else {
                 throw new EdgeAuthException("You must provide an expiration time or a duration window ( > 0 )");
             }
-        } else if(this.endTime <= 0) {
+        } else if(endTime <= 0) {
             throw new EdgeAuthException("endTime must be ( > 0 )");
         }
 
-        if (this.startTime != null && (this.endTime <= this.startTime)) {
+        if (startTime != null && (endTime <= startTime)) {
             throw new EdgeAuthException("Token will have already expired.");
         }
 
@@ -236,11 +239,11 @@ public class EdgeAuth {
         }
         if (this.startTime != null) {
             newToken.append("st=");
-            newToken.append(Long.toString(this.startTime));
+            newToken.append(startTime.toString());
             newToken.append(this.fieldDelimiter);
         }
         newToken.append("exp=");
-        newToken.append(Long.toString(this.endTime));
+        newToken.append(endTime.toString());
         newToken.append(this.fieldDelimiter);
 
         if (!isUrl) {
@@ -513,21 +516,21 @@ public class EdgeAuth {
     /**
      * @return startTime
      */
-    public long getStartTime() {
+    public Long getStartTime() {
         return this.startTime;
     }
 
     /**
      * @return endTime
      */
-    public long getEndTime() {
+    public Long getEndTime() {
         return this.endTime;
     }
 
     /**
      * @return windowSeconds
      */
-    public long getwindowSeconds() {
+    public Long getwindowSeconds() {
         return this.windowSeconds;
     }
 

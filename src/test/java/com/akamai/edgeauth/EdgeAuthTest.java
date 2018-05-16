@@ -324,6 +324,9 @@ public class EdgeAuthTest {
 
         statusCode = EdgeAuthTest.requests(this.eaHostname, "/q_escape_ignore/world/", qs, null);
         assertEquals("404", statusCode);
+
+        assertEquals(null, ead.getStartTime());
+        assertEquals(null, ead.getEndTime());
     }
 
     @Test
