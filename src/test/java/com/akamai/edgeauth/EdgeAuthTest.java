@@ -311,7 +311,7 @@ public class EdgeAuthTest {
                 .build();
         String acl[] = { "/q_escape_ignore", "/q_escape_ignore/*" };
 
-        // For Java 8
+        // For Java 8=
         // String token = ead.generateACLToken(String.join(EdgeAuth.ACL_DELIMITER, acl));
 
         // For All
