@@ -64,6 +64,7 @@ try {
   String token = ea.generateURLToken(path);
   String url = String.format("http(s)://%s%s?%s=%s", hostname, path,
     ea.getTokenName(), token);
+  // If you have a query string, be aware of string formatter in url.
   // => Link or Request "url" /w Query string
 } catch (EdgeAuthException e) {
   e.printStackTrace();
