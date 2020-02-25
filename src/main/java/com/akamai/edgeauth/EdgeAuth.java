@@ -30,8 +30,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
-import javax.xml.bind.DatatypeConverter;
 
+import static com.akamai.edgeauth.hexutils.DataTypeConverter.parseHexBinary;
 
 /**
  * This is for returning authorization token string. You can build an instance 
@@ -280,7 +280,7 @@ public class EdgeAuth {
 
         try {
             Mac hmac = Mac.getInstance(this.algorithm);
-            byte[] keyBytes = DatatypeConverter.parseHexBinary(this.key);
+            byte[] keyBytes = parseHexBinary(this.key);
             SecretKeySpec secretKey = new SecretKeySpec(keyBytes, this.algorithm);
             hmac.init(secretKey);
 
