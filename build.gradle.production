@@ -15,7 +15,7 @@ repositories {
 dependencies {
   compile gradleApi()
 
-  testCompile 'junit:junit:4.12'
+  testCompile 'junit:junit:4.13.2'
 }
 
 task wrapper(type: Wrapper) {
