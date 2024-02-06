@@ -9,7 +9,7 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.Map;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import org.junit.After;
 import org.junit.Before;
@@ -17,7 +17,7 @@ import org.junit.Test;
 
 
 public class EdgeAuthTest {
-    private static long DEFAULT_WINDOW_SECONDS = 500L;
+    private static final long DEFAULT_WINDOW_SECONDS = 500L;
 
     private EdgeAuth ea;
     private EdgeAuth cea;
@@ -108,13 +108,13 @@ public class EdgeAuthTest {
         sb.append("Host: ");
         sb.append(hostname);
         sb.append("\r\n");
-        if (header != null && header != "") {
+        if (header != null && !header.isEmpty()) {
             sb.append(header);
             sb.append("\r\n");
         }
         sb.append("\r\n");
 
-        request.print(sb.toString());
+        request.print(sb);
         request.flush();
 
         InputStream inStream = socket.getInputStream();
@@ -137,13 +137,13 @@ public class EdgeAuthTest {
         return statusCode;
     }
 
-    private void queryAssertEqual(String path, String expacted, boolean escapeEarly, boolean transition, String payload, String sessionId, boolean isUrl) throws EdgeAuthException, UnknownHostException, IOException {
+    private void queryAssertEqual(String path, String expected, boolean escapeEarly, boolean transition, String payload, String sessionId, boolean isUrl) throws EdgeAuthException, UnknownHostException, IOException {
         this.tokenSetting('q', escapeEarly, transition);
 
         ea.setPayload(payload);
         ea.setSessionId(sessionId);
 
-        String token = "";
+        String token;
         if (isUrl) {
             token = this.ea.generateURLToken(path);
         } else {
@@ -152,16 +152,16 @@ public class EdgeAuthTest {
 
         String qs = this.ea.getTokenName() + "=" + token;
         String statusCode = EdgeAuthTest.requests(this.eaHostname, path, qs, null);
-        assertEquals(expacted, statusCode);
+        assertEquals(expected, statusCode);
     }
 
-    private void cookieAssertEqual(String path, String expacted, boolean escapeEarly, boolean transition, String payload, String sessionId, boolean isUrl) throws EdgeAuthException, UnknownHostException, IOException {
+    private void cookieAssertEqual(String path, String expected, boolean escapeEarly, boolean transition, String payload, String sessionId, boolean isUrl) throws EdgeAuthException, UnknownHostException, IOException {
         this.tokenSetting('c', escapeEarly, transition);
 
         cea.setPayload(payload);
         cea.setSessionId(sessionId);
 
-        String token = "";
+        String token;
         if (isUrl) {
             token = this.cea.generateURLToken(path);
         } else {
@@ -170,16 +170,16 @@ public class EdgeAuthTest {
 
         String cookie = "Cookie: " + this.cea.getTokenName() + "=" + token;
         String statusCode = EdgeAuthTest.requests(this.eaHostname, path, null, cookie);
-        assertEquals(expacted, statusCode);
+        assertEquals(expected, statusCode);
     }
 
-    private void headerAssertEqual(String path, String expacted, boolean escapeEarly, boolean transition, String payload, String sessionId, boolean isUrl) throws EdgeAuthException, UnknownHostException, IOException {
+    private void headerAssertEqual(String path, String expected, boolean escapeEarly, boolean transition, String payload, String sessionId, boolean isUrl) throws EdgeAuthException, UnknownHostException, IOException {
         this.tokenSetting('h', escapeEarly, transition);
 
         hea.setPayload(payload);
         hea.setSessionId(sessionId);
 
-        String token = "";
+        String token;
         if (isUrl) {
             token = this.hea.generateURLToken(path);
         } else {
@@ -188,7 +188,7 @@ public class EdgeAuthTest {
 
         String header = this.hea.getTokenName() + ":" + token;
         String statusCode = EdgeAuthTest.requests(this.eaHostname, path, null, header);
-        assertEquals(expacted, statusCode);
+        assertEquals(expected, statusCode);
     }
 
     private void testCaseSet(String queryPath, String cookiePath, String headerPath, boolean escapeEarly, boolean isUrl) throws UnknownHostException, EdgeAuthException, IOException {
@@ -309,7 +309,7 @@ public class EdgeAuthTest {
                 .key(this.eaEncryptionKey)
                 .windowSeconds(EdgeAuthTest.DEFAULT_WINDOW_SECONDS)
                 .build();
-        String acl[] = { "/q_escape_ignore", "/q_escape_ignore/*" };
+        String[] acl = { "/q_escape_ignore", "/q_escape_ignore/*" };
 
         // For Java 8=
         // String token = ead.generateACLToken(String.join(EdgeAuth.ACL_DELIMITER, acl));
