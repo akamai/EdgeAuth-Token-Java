@@ -86,6 +86,24 @@ public class EdgeAuth {
     /** print all parameters. */
     private boolean verbose;
 
+    /**
+     * @param tokenType Not used
+     * @param tokenName Name for the new token
+     * @param key Secret required to generate the token. It must be hexadecimal digit string with even-length
+     * @param algorithm Algorithm to use to generate the token (sha1, sha256, or md5)
+     * @param salt Additional data validated by the token but NOT included in the token body. It will be deprecated
+     * @param ip IP Address to restrict this token to. Troublesome in many cases (roaming, NAT, etc) so not often used
+     * @param payload Additional text added to the calculated digest
+     * @param sessionId The session identifier for single use tokens or other advanced cases
+     * @param startTime What is the start time? ({@code NOW} for the current time)
+     * @param endTime When does this token expire? It overrides {@code windowSeconds}
+     * @param windowSeconds How long is this token valid for
+     * @param fieldDelimiter Character used to delimit token body fields
+     * @param aclDelimiter Character used to delimit acl
+     * @param escapeEarly Causes strings to be url encoded before being used
+     * @param verbose Print all parameters
+     * @throws EdgeAuthException EdgeAuthException
+     */
     public EdgeAuth(
             String tokenType,
             String tokenName,

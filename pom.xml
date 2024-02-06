@@ -155,7 +155,7 @@
                     <configuration>
                         <serverId>ossrh</serverId>
                         <nexusUrl>https://oss.sonatype.org/</nexusUrl>
-<!--                        <stagingProfileId>21d1e18e25c8e4</stagingProfileId>-->
+                        <stagingProfileId>529a612879c689</stagingProfileId>
                     </configuration>
                 </plugin>
             </plugins>
@@ -180,7 +180,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-enforcer-plugin</artifactId>
-                <version>3.1.0</version>
+                <version>3.4.1</version>
                 <executions>
                     <execution>
                         <id>enforce-maven</id>
