@@ -303,7 +303,7 @@ public class EdgeAuth {
             hmac.init(secretKey);
 
             byte[] hmacBytes = hmac.doFinal(hashSource.toString().getBytes());
-            return newToken.toString() + "hmac=" +
+            return newToken + "hmac=" +
                     String.format("%0" + (2*hmac.getMacLength()) +  "x", new BigInteger(1, hmacBytes));
         } catch (NoSuchAlgorithmException | InvalidKeyException e) {
             throw new EdgeAuthException(e.toString());
