@@ -1,7 +1,7 @@
 # EdgeAuth-Token-Java: Akamai Edge Authorization Token for Java
 
 [![Maven Central](https://img.shields.io/badge/maven%20central-0.2.0-brightgreen.svg)](http://search.maven.org/#artifactdetails%7Ccom.akamai%7Cedgeauth%7C0.2.0%7C)
-[![Build Status](https://travis-ci.org/akamai/EdgeAuth-Token-Java.svg?branch=master)](https://travis-ci.org/akamai/EdgeAuth-Token-Java)
+[![Build Status](https://travis-ci.org/akamai/EdgeAuth-Token-Java.svg?branch=master)](https://github.com/akamai/EdgeAuth-Token-Java/actions/workflows/check.yml/badge.svg)
 [![License](http://img.shields.io/:license-apache-blue.svg)](https://github.com/akamai/EdgeAuth-Token-Java/blob/master/LICENSE)
 
 EdgeAuth-Token-Java is Akamai Edge Authorization Token in the HTTP Cookie, Query String and Header for a client.
