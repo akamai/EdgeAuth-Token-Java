@@ -57,8 +57,6 @@
     </distributionManagement>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.source>8</maven.compiler.source>
-        <maven.compiler.target>17</maven.compiler.target>
         <dependency-check.version>8.4.0</dependency-check.version>
     </properties>
 
@@ -209,10 +207,24 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.12.1</version>
+            </plugin>
         </plugins>
     </build>
 
     <profiles>
+        <profile>
+            <id>set-compiler-release</id>
+            <activation>
+                <jdk>[9,)</jdk>
+            </activation>
+            <properties>
+                <maven.compiler.release>8</maven.compiler.release>
+            </properties>
+        </profile>
         <profile>
             <id>sonatype-oss-release</id>
             <build>
