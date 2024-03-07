@@ -40,7 +40,7 @@ public class EdgeAuthBuilder {
     /** additional data validated by the token but NOT included in the token body. It will be deprecated. */
     private String salt = null;
 
-    /** IP Address to restrict this token to. Troublesome in many cases (roaming, NAT, etc) so not often used. */
+    /** IP Address to restrict this token to. Troublesome in many cases (roaming, NAT, etc.) so not often used. */
     private String ip = null;
 
     /** additional text added to the calculated digest. */

@@ -30,7 +30,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
-import javax.xml.bind.DatatypeConverter;
+import jakarta.xml.bind.DatatypeConverter;
 
 
 /**
@@ -86,6 +86,24 @@ public class EdgeAuth {
     /** print all parameters. */
     private boolean verbose;
 
+    /**
+     * @param tokenType Not used
+     * @param tokenName Name for the new token
+     * @param key Secret required to generate the token. It must be hexadecimal digit string with even-length
+     * @param algorithm Algorithm to use to generate the token (sha1, sha256, or md5)
+     * @param salt Additional data validated by the token but NOT included in the token body. It will be deprecated
+     * @param ip IP Address to restrict this token to. Troublesome in many cases (roaming, NAT, etc) so not often used
+     * @param payload Additional text added to the calculated digest
+     * @param sessionId The session identifier for single use tokens or other advanced cases
+     * @param startTime What is the start time? ({@code NOW} for the current time)
+     * @param endTime When does this token expire? It overrides {@code windowSeconds}
+     * @param windowSeconds How long is this token valid for
+     * @param fieldDelimiter Character used to delimit token body fields
+     * @param aclDelimiter Character used to delimit acl
+     * @param escapeEarly Causes strings to be url encoded before being used
+     * @param verbose Print all parameters
+     * @throws EdgeAuthException EdgeAuthException
+     */
     public EdgeAuth(
             String tokenType,
             String tokenName,
@@ -121,7 +139,7 @@ public class EdgeAuth {
     }
 
     /**
-     * Makes a string array to joined a string with delimiter.
+     * Makes a string array to join a string with delimiter.
      *
      * @param delimiter {@code ACL_DELIMITER}
      * @param lists ACL(Access Control List) string array
@@ -149,7 +167,7 @@ public class EdgeAuth {
      * @throws EdgeAuthException EdgeAuthException
      */
     private String escapeEarly(final String text) throws EdgeAuthException {
-        if (this.escapeEarly == true) {
+        if (this.escapeEarly) {
             try {
                 StringBuilder newText = new StringBuilder(URLEncoder.encode(text, "UTF-8"));
                 Pattern pattern = Pattern.compile("%..");
@@ -183,7 +201,7 @@ public class EdgeAuth {
         Long startTime = this.startTime;
         Long endTime = this.endTime;
 
-        if (startTime == EdgeAuth.NOW) {
+        if (EdgeAuth.NOW.equals(startTime)) {
             startTime = Calendar.getInstance(TimeZone.getTimeZone("UTC")).getTimeInMillis() / 1000L;
         } else if(startTime != null && startTime < 0) {
             throw new EdgeAuthException("startTime must be ( > 0 )");
@@ -285,11 +303,9 @@ public class EdgeAuth {
             hmac.init(secretKey);
 
             byte[] hmacBytes = hmac.doFinal(hashSource.toString().getBytes());
-            return newToken.toString() + "hmac=" +
+            return newToken + "hmac=" +
                     String.format("%0" + (2*hmac.getMacLength()) +  "x", new BigInteger(1, hmacBytes));
-        } catch (NoSuchAlgorithmException e) {
-            throw new EdgeAuthException(e.toString());
-        } catch (InvalidKeyException e) {
+        } catch (NoSuchAlgorithmException | InvalidKeyException e) {
             throw new EdgeAuthException(e.toString());
         }
     }
@@ -302,7 +318,7 @@ public class EdgeAuth {
      * @throws EdgeAuthException EdgeAuthException
      */
     public String generateURLToken(String url) throws EdgeAuthException {
-        if (url == null || url == "") {
+        if (url == null || url.trim().isEmpty()) {
             throw new EdgeAuthException("You must provide a URL.");
         }
         return generateToken(url, true);
@@ -316,7 +332,7 @@ public class EdgeAuth {
      * @throws EdgeAuthException EdgeAuthException
      */
     public String generateACLToken(String acl) throws EdgeAuthException {
-        if (acl == null || acl == "") {
+        if (acl == null || acl.trim().isEmpty()) {
             throw new EdgeAuthException("You must provide an ACL.");
         }
         return generateToken(acl, false);
@@ -350,7 +366,7 @@ public class EdgeAuth {
      * @throws EdgeAuthException EdgeAuthException
      */
     public void setTokenName(String tokenName) throws EdgeAuthException {
-        if (tokenName == null || tokenName == "") {
+        if (tokenName == null || tokenName.trim().trim().isEmpty()) {
             throw new EdgeAuthException("You must provide a token name.");
         }
         this.tokenName = tokenName;
@@ -361,7 +377,7 @@ public class EdgeAuth {
      * @throws EdgeAuthException EdgeAuthException
      */
     public void setKey(String key) throws EdgeAuthException {
-        if (key == null || key == "") {
+        if (key == null || key.trim().isEmpty()) {
             throw new EdgeAuthException("You must provide a secret in order to generate a new token.");
         }
         this.key = key;
@@ -530,7 +546,7 @@ public class EdgeAuth {
     /**
      * @return windowSeconds
      */
-    public Long getwindowSeconds() {
+    public Long getWindowSeconds() {
         return this.windowSeconds;
     }
 

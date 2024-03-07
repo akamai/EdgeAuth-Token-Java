@@ -24,4 +24,5 @@ bin/
 .classpath
 .settings
 .project
-Secret.java
+target/
+*.iml
