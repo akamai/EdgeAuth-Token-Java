@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.akamai</groupId>
     <artifactId>edgeauth</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.1-SNAPSHOT</version>
     <name>EdgeAuth-Token-Java</name>
     <description>Akamai Edge Authorization Token for Java</description>
     <url>https://github.com/akamai/EdgeAuth-Token-Java</url>
