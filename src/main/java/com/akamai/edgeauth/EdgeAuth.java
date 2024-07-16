@@ -25,12 +25,12 @@ import java.net.URLEncoder;
 import java.security.NoSuchAlgorithmException;
 import java.security.InvalidKeyException;
 import java.util.Calendar;
+import java.util.HexFormat;
 import java.util.TimeZone;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
-import jakarta.xml.bind.DatatypeConverter;
 
 
 /**
@@ -298,7 +298,7 @@ public class EdgeAuth {
 
         try {
             Mac hmac = Mac.getInstance(this.algorithm);
-            byte[] keyBytes = DatatypeConverter.parseHexBinary(this.key);
+            byte[] keyBytes = HexFormat.of().parseHex(this.key);
             SecretKeySpec secretKey = new SecretKeySpec(keyBytes, this.algorithm);
             hmac.init(secretKey);
 
